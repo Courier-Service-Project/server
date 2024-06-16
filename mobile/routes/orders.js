@@ -8,10 +8,15 @@ const {
   getOrderTypeCost,
   updateWeightCost,
   getPriceDetails,
-  getOrderStateCount
+  getOrderStateCount,
+  getOnDiliveryOrders,
+  updateOnDiliveryState,
+  getCompletedOrders
 } = require("../controllers/orders");
 const {checkToken} = require("../middleware/checkToken");
 
+orderRoute.get("/getOnDiliveryOrders",checkToken,getOnDiliveryOrders);
+orderRoute.get("/getCompletedOrders",checkToken,getCompletedOrders)
 orderRoute.get("/:branchLocation",checkToken,getPendingOrders);
 orderRoute.post("/updatePendingState/:branchLocation",checkToken,updatePendingState);
 orderRoute.get("/getOrderDetails/:order_id",checkToken,getOrderDetails);
@@ -21,6 +26,11 @@ orderRoute.get("/getOrderTypeCost/:order_id",checkToken,getOrderTypeCost);
 orderRoute.patch("/updateWeightCost/:order_id",checkToken,updateWeightCost);
 orderRoute.get("/getPriceDetails/:order_id",checkToken,getPriceDetails)
 orderRoute.get("/getOrderStateCount/:user_id/:branchLocation",checkToken,getOrderStateCount)
+orderRoute.patch("/updateOnDiliveryState/:order_id",checkToken,updateOnDiliveryState)
+
+
+
+
 
 
 

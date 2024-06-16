@@ -13,10 +13,14 @@ const {
   getNoOfCompletedOrders,
   getNoOfOnGoingOrders,
   getSelectedProvince,
+  getOnDiliveryOrders,
+  updateOnDiliveryState,
+  getCompletedOrders,
 } = require("../services/orders");
 
 module.exports = {
   getPendingOrders: (req, res) => {
+    console.log("in side this....");
     let branchLocation = req.params.branchLocation;
     getPendingOrders(branchLocation, (error, results) => {
       if (error) {
@@ -51,11 +55,17 @@ module.exports = {
           message: error,
         });
       }
-      if (result) {
+      if (result.affectedRows>0) {
+        console.log('yes')
         return res.json({
-          success: 0,
-          message: result,
+          success: 200,
+          message: 'successfully updated',
         });
+      }else{
+        return res.json({
+          success:101,
+          message:'status doesnot change successfully'
+        })
       }
     });
   },
@@ -244,5 +254,73 @@ module.exports = {
     //normally i think when promise is used it will execute other functions only after getting the result of asynchronous function
     //then if we use await and async it will execute other operations mean while the asynchronous operation executed
     // so normally i think async and await is used when calling the promises.all the operations in the promise is hide by await keyword
+  },
+  getOnDiliveryOrders: (req, res) => {
+    getOnDiliveryOrders((error, result) => {
+      console.log(result);
+      if (error) {
+        return res.json({
+          success: 0,
+          message: error,
+        });
+      } else if (result.length == 0) {
+        return res.json({
+          success: 100,
+          message: "no orders found",
+        });
+      } else if (result) {
+        return res.json({
+          success: 200,
+          message: result,
+        });
+      } else {
+        return res.json({
+          success: 100,
+          message: "something went wrong",
+        });
+      }
+    });
+  },
+  updateOnDiliveryState: (req, res) => {
+    const order_id = req.params.order_id;
+    updateOnDiliveryState(order_id, (error, result) => {
+      if (error) {
+        return res.json({
+          success: 0,
+          message: error,
+        });
+      } else if (result.affectedRows > 0) {
+        return res.json({
+          success: 200,
+          message: "status change successfully",
+        });
+      } else {
+        return res.json({
+          success: 101,
+          message: "status doesn't change successfully",
+        });
+      }
+    });
+  },
+  getCompletedOrders: (req, res) => {
+    getCompletedOrders((error, result) => {
+      console.log(result);
+      if (error) {
+        return res.json({
+          success: 0,
+          message: error,
+        });
+      } else if (result.length == 0) {
+        return res.json({
+          success: 100,
+          message: "Orders not found",
+        });
+      } else {
+        return res.json({
+          success: 200,
+          message: result,
+        });
+      }
+    });
   },
 };

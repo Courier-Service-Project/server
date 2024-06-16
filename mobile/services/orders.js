@@ -1,9 +1,13 @@
 const pool = require("../../config/dbConfig.js");
+const {
+  getOngoingOrders,
+  getCompletedOrders,
+} = require("../controllers/orders.js");
 
 module.exports = {
   getPendingOrders: (brancLocation, callback) => {
     pool.query(
-      `SELECT Order_id,Pickup_District,Emmergency,DiliveryDistrict,DiliveryProvince
+      `SELECT Order_id,Pickup_District,Emmergency,DiliveryDistrict,DiliveryProvince,orderPlaceDate
         FROM Orders o,Reciever r
         WHERE o.recieverId=r.recieverId AND
         branchLocation=? AND
@@ -31,7 +35,7 @@ module.exports = {
   },
   getOrderDetails: (order_id, callback) => {
     pool.query(
-      `SELECT c.FirstName AS FN,c.LastName AS LN,cm.mobile AS M,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,r.FirstName,r.LastName,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile
+      `SELECT c.FirstName AS FN,c.LastName AS LN,cm.mobile AS M,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.orderPlaceDate,r.FirstName,r.LastName,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile
        FROM Customer c , CustomerMobile cm , Orders o, Reciever r, RecieverMobile rm
        WHERE o.recieverId=r.recieverid AND r.recieverid=rm.recieverid AND o.cus_id=c.cus_id AND c.cus_id=cm.cus_id AND o.Order_Id=?`,
       [order_id],
@@ -45,7 +49,7 @@ module.exports = {
   },
   getToDoOrderList: (brancLocation, order_id, callback) => {
     pool.query(
-      `SELECT Order_id,Pickup_District,Emmergency,DiliveryDistrict,DiliveryProvince 
+      `SELECT Order_id,Pickup_District,Emmergency,DiliveryDistrict,DiliveryProvince,orderPlaceDate 
     FROM Orders o,Reciever r
     WHERE o.recieverId=r.recieverId AND
     branchLocation=? AND
@@ -212,9 +216,51 @@ module.exports = {
           if (error) {
             reject(error);
           }
-          resolve(result);;
+          resolve(result);
         }
       );
     });
+  },
+  getOnDiliveryOrders: (callback) => {
+    pool.query(
+      `SELECT Order_id,Emmergency,Pickup_District,DiliveryDistrict,pickup_Date
+       FROM Orders o , Reciever r  
+       WHERE o.recieverId=r.recieverid AND Status='ONDILIVERY'`,
+      [],
+      (error, result, feilds) => {
+        if (error) {
+          return callback(error);
+        }
+        return callback(null, result);
+      }
+    );
+  },
+  updateOnDiliveryState: (order_id, callback) => {
+    pool.query(
+      `UPDATE Orders
+       SET Status = 'VERIFYDILIVERY'
+       WHERE Order_id=?`,
+      [order_id],
+      (error, result, feilds) => {
+        if (error) {
+          return callback(error);
+        }
+        return callback(null, result);
+      }
+    );
+  },
+  getCompletedOrders: (callback) => {
+    pool.query(
+      `SELECT Order_id,Emmergency,Pickup_District,DiliveryDistrict,Total_Cost,dilivery_Date
+       FROM Orders o , Reciever r
+       WHERE o.recieverId=r.recieverid AND Status='DILIVERED'`,
+      [],
+      (error, result, fields) => {
+        if (error) {
+          return callback(error);
+        }
+        return callback(null, result);
+      }
+    );
   },
 };
