@@ -9,11 +9,11 @@ const {
   resetForgotPassword,
 } = require("../controllers/users.js");
 
-route.get("/",checkToken,getUsers);
+route.get("/", getUsers);
 route.post("/verifyEmail", verifyEmail);
 route.post("/resendOtp", resendOtp);
 route.post("/login", logInUser);
-route.patch("/resetPassword",checkToken,resetPassword);
+route.patch("/resetPassword", resetPassword);
 route.patch("/resetForgotPassword", resetForgotPassword);
 
 
