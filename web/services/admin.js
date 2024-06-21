@@ -100,9 +100,9 @@ module.exports={
       })
       },
       getAdminprofileDetails: (callBack)=>{
-        pool.query(`SELECT a.admin_Id,a.FirstName,a.LastName,a.type,a.Tele,a.Email,am.mobile
-                    FROM Admin a, AdminMobile am
-                     WHERE  a.admin_Id=am.admin_Id`,[],
+        pool.query(`SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile
+                    FROM Admin a
+                    LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id`,[],
                 (error,results)=>{
                     if(error){
                         return callBack(error);
@@ -112,9 +112,10 @@ module.exports={
             )
      },
      getAdminprofileDetailsById: (id,callBack)=>{
-      pool.query(`SELECT a.admin_Id,a.FirstName,a.LastName,a.type,a.Tele,a.Email,am.mobile
-                    FROM Admin a, AdminMobile am
-                   WHERE a.admin_Id=? AND a.admin_Id=am.admin_Id`,[id],
+      pool.query(`SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile
+                  FROM Admin a
+                  LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id
+                  WHERE a.admin_Id = ?`,[id],
               (error,results)=>{
                   if(error){
                       return callBack(error);

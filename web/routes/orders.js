@@ -7,7 +7,16 @@ const { getOrderDetailsById,
         getInprogressOrderList,
         getPendingorderdetailsById,
         getCompleteOrderdetailsById,
-        getinprogressOrderdetailsById
+        getinprogressOrderdetailsById,
+        DeletePendingOrderDetailsById,
+        UpdatePendingOrderDetailsById,
+        EditPendindOrder,
+        getVerifyPickedOrderList,
+        getVerifyPickedOrderListById,
+        UpdateVerifyPickedOrderDetailsById,
+        getVerifydiliveryOrderList,
+        getVerifyDiliveryOrderListById,
+        UpdateVerifyDiliveryOrderDetailsById
         }=require("../controllers/orders.js")
 
 webOrderRouter.get("/orderDetails/:orderId",getOrderDetailsById);
@@ -19,6 +28,14 @@ webOrderRouter.get("/InprogressorderDetails",getInprogressOrderList);
 webOrderRouter.get("/pendingorderdetailsbyid/:id", getPendingorderdetailsById);
 webOrderRouter.get("/completeorderdetailsbyid/:id", getCompleteOrderdetailsById);
 webOrderRouter.get("/inprogressorderdetailsbyid/:id", getinprogressOrderdetailsById);
+webOrderRouter.delete("/deletependingorderdetails/:id", DeletePendingOrderDetailsById);
+webOrderRouter.patch("/updatependingorderdetails/:id", UpdatePendingOrderDetailsById);
+webOrderRouter.post("/editpendingorderdetails", EditPendindOrder);
+webOrderRouter.get("/verifypickedorderDetails",getVerifyPickedOrderList);
+webOrderRouter.get("/verifypickedorderDetails/:id",getVerifyPickedOrderListById);
+webOrderRouter.patch("/updateverifyPickedorderDetails/:id", UpdateVerifyPickedOrderDetailsById);
+webOrderRouter.get("/verifydiliveryorderDetails",getVerifydiliveryOrderList);
+webOrderRouter.get("/verifydiliveryorderDetailsbyid/:id",getVerifyDiliveryOrderListById);
+webOrderRouter.patch("/updateverifyDiliveryorderDetails/:id",UpdateVerifyDiliveryOrderDetailsById);
 
-
-module.exports = webOrderRouter; 
+module.exports = webOrderRouter;
