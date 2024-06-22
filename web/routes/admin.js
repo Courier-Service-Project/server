@@ -7,6 +7,8 @@ const {
   ChangeContact,
   CheckPrePassword,
   ChangePassword,
+  getAdminprofileDetails,
+  getAdminprofileDetailsById
 } = require("../controllers/admin.js");
 const auth = require("../middleware/auth.js");
 
@@ -17,5 +19,7 @@ route.post("/changeUsername", ChangeUserName);
 route.post("/changeContact", ChangeContact);
 route.post("/CheckPrePassword", CheckPrePassword);
 route.post("/ChangePassword", ChangePassword);
+route.get("/AdminprofileDetails",getAdminprofileDetails);
+route.get("/AdminprofileDetailsById/:id",getAdminprofileDetailsById);
 
 module.exports = route;
