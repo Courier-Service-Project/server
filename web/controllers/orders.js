@@ -43,7 +43,6 @@ module.exports = {
         await RecieverTable(data);
         const senderID = await GetsenderID();
         const recieverID = await GetRecieverID();
-        //console.log(senderID,recieverID)
         await SenderTele(senderID,data.stelephone)
         await RecieverTele(recieverID,data.rtelephone)
         await OrderTable(data,recieverID,senderID)

@@ -18,10 +18,11 @@ module.exports = {
   SenderTable: (data) => { 
     return new Promise((resolve, reject) => {
       pool.query(
-        `insert into Customer (FirstName,LastName,StreetNo,Street,City) values(?,?,?,?,?)`,
-        [data.sfname, data.slname, data.sstreetNo, data.sstreet, data.scity],
+        `insert into Customer (FirstName,LastName,StreetNo,Street,City,Email) values(?,?,?,?,?,?)`,
+        [data.sfname, data.slname, data.sstreetNo, data.sstreet, data.scity,data.sEmail],
         (error, results, feilds) => {
           if (error) {
+            
             reject(error);
           }
           resolve(results);
@@ -32,7 +33,7 @@ module.exports = {
   RecieverTable: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        `insert into Reciever (FirstName,LastName,DiliveryProvince,DiliveryDistrict,StreetNo,Street,City) values(?,?,?,?,?,?,?)`,
+        `insert into Reciever (FirstName,LastName,DiliveryProvince,DiliveryDistrict,StreetNo,Street,City,Email) values(?,?,?,?,?,?,?,?)`,
         [
           data.rfname,
           data.rlname,
@@ -41,6 +42,7 @@ module.exports = {
           data.rstreetNo,
           data.rstreet,
           data.rhometown,
+          data.rEmail,
         ],
 
         (error, results, feilds) => {
