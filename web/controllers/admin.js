@@ -41,7 +41,7 @@ module.exports = {
           var accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "1d",
           });
-          console.log(accessToken);
+          //console.log(accessToken);
           return res.json({
             success: 1,
             message: "correct password",
@@ -160,7 +160,7 @@ module.exports = {
   ChangePassword: (req, res) => {
     const salt = genSaltSync(10);
     const data = req.body;
-    console.log(data);
+    //console.log(data);
     data.newPassword = hashSync(data.newPassword, salt);
     data.comPassword = hashSync(data.comPassword, salt);
 
