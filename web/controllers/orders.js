@@ -27,7 +27,8 @@ const {
   EditcustomermobilePendingOrderDetailById,
   EditrecivermobilePendingOrderDetailById,
   getOrderTotalCost,
-  UpdateUserEarnings
+  UpdateUserEarnings,
+  getOrderCounts
 } = require("../services/orders");
 
 module.exports = {
@@ -454,5 +455,19 @@ module.exports = {
         });
       }
     });
+  },
+  getOrderCounts: (req ,res) =>{
+    getOrderCounts((error,result) => {
+        if(error){
+            res.json({
+                success:0,
+                message:error,
+            })
+        }
+        return res.json({
+            success: 200,
+            message: result,
+        });
+    })
   }
 };
