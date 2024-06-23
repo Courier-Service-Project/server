@@ -15,7 +15,8 @@ const {getOrderDetailsById,
     UpdateVerifyPickedOrderDetailsById,
     getVerifydiliveryOrderList,
     getVerifyDiliveryOrderListById,
-    UpdateVerifyDiliveryOrderDetailsById}=require("../controllers/orders.js")
+    UpdateVerifyDiliveryOrderDetailsById,
+    getOrderCounts}=require("../controllers/orders.js")
 const { protect,allowRoles } = require('../middleware/auth.js')
 
 webOrderRouter.get("/orderDetails/:orderId",getOrderDetailsById);
@@ -35,5 +36,7 @@ webOrderRouter.patch("/updateverifyPickedorderDetails/:id", UpdateVerifyPickedOr
 webOrderRouter.get("/verifydiliveryorderDetails",getVerifydiliveryOrderList);
 webOrderRouter.get("/verifydiliveryorderDetailsbyid/:id",getVerifyDiliveryOrderListById);
 webOrderRouter.patch("/updateverifyDiliveryorderDetails/:id",UpdateVerifyDiliveryOrderDetailsById);
+webOrderRouter.get("/orderCounts",getOrderCounts);
+
 
 module.exports = webOrderRouter; 
