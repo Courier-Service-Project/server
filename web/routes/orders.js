@@ -17,6 +17,7 @@ const {
   getVerifydiliveryOrderList,
   getVerifyDiliveryOrderListById,
   UpdateVerifyDiliveryOrderDetailsById,
+  getOrderCounts,
 } = require("../controllers/orders.js");
 const { protect, allowRoles } = require("../middleware/auth.js");
 
@@ -61,5 +62,6 @@ webOrderRouter.patch(
   "/updateverifyDiliveryorderDetails/:id",
   UpdateVerifyDiliveryOrderDetailsById
 );
+webOrderRouter.get("/orderCounts", getOrderCounts);
 
 module.exports = webOrderRouter;
