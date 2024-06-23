@@ -7,7 +7,7 @@ const {
   CheckPrePassword,
   ChangePassword,
   getAdminprofileDetails,
-  getAdminprofileDetailsById
+  getAdminprofileDetailsById,
 } = require("../services/admin.js");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 var jwt = require("jsonwebtoken");
@@ -41,7 +41,7 @@ module.exports = {
           var accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "1d",
           });
-          console.log(accessToken);
+          //console.log(accessToken);
           return res.json({
             success: 1,
             message: "correct password",
@@ -160,7 +160,7 @@ module.exports = {
   ChangePassword: (req, res) => {
     const salt = genSaltSync(10);
     const data = req.body;
-    console.log(data);
+    //console.log(data);
     data.newPassword = hashSync(data.newPassword, salt);
     data.comPassword = hashSync(data.comPassword, salt);
 
@@ -186,55 +186,51 @@ module.exports = {
       });
     }
   },
-  getAdminprofileDetails: (req,res)=>{
+  getAdminprofileDetails: (req, res) => {
     //const id = req.params.id;
     // console.log(id);
-    getAdminprofileDetails((error,results)=>{
-        if(error){
-            res.json({
-                success:0,
-                message:error
-            })
-        }
-        if(results.length==0){
-            res.json({
-                success:101,
-                message: "invalid order id"
-            })
-        }
-        else if(results){
-            res.json({
-                success: 200,
-                message:results
-               
-            })
-        }
-    })
-},
+    getAdminprofileDetails((error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "invalid order id",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
+    });
+  },
 
-getAdminprofileDetailsById: (req,res)=>{
-  const id = req.params.id;
-  // console.log(id);
-  getAdminprofileDetailsById(id,(error,results)=>{
-      if(error){
-          res.json({
-              success:0,
-              message:error
-          })
+  getAdminprofileDetailsById: (req, res) => {
+    const id = req.params.id;
+    // console.log(id);
+    getAdminprofileDetailsById(id, (error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
       }
-      if(results.length==0){
-          res.json({
-              success:101,
-              message: "invalid order id"
-          })
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "invalid order id",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
       }
-      else if(results){
-          res.json({
-              success: 200,
-              message:results
-             
-          })
-      }
-  })
-}
+    });
+  },
 };
