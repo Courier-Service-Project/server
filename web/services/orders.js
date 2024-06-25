@@ -1,4 +1,3 @@
-
 const pool = require("../../config/dbConfig.js");
 module.exports = {
   getOrderDetailsById: (id, callBack) => {
@@ -15,14 +14,20 @@ module.exports = {
       }
     );
   },
-  SenderTable: (data) => { 
+  SenderTable: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `insert into Customer (FirstName,LastName,StreetNo,Street,City,Email) values(?,?,?,?,?,?)`,
-        [data.sfname, data.slname, data.sstreetNo, data.sstreet, data.scity,data.sEmail],
+        [
+          data.sfname,
+          data.slname,
+          data.sstreetNo,
+          data.sstreet,
+          data.scity,
+          data.sEmail,
+        ],
         (error, results, feilds) => {
           if (error) {
-            
             reject(error);
           }
           resolve(results);
@@ -78,7 +83,7 @@ module.exports = {
         ],
         (error, results, feilds) => {
           if (error) {
-            console.log(error)
+            console.log(error);
             reject(error);
           }
           resolve(results);
@@ -112,11 +117,11 @@ module.exports = {
       );
     });
   },
-  SenderTele: (rid,tele) => {
+  SenderTele: (rid, tele) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `insert into CustomerMobile (cus_id,mobile) values(?,?)`,
-        [rid,tele],
+        [rid, tele],
         (error, results, feilds) => {
           if (error) {
             reject(error);
@@ -126,11 +131,11 @@ module.exports = {
       );
     });
   },
-  RecieverTele: (sid,tele) => {
+  RecieverTele: (sid, tele) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `insert into RecieverMobile (recieverId,mobile) values(?,?)`,
-        [sid,tele],
+        [sid, tele],
         (error, results, feilds) => {
           if (error) {
             reject(error);
@@ -338,11 +343,11 @@ module.exports = {
       }
     );
   },
-  UpdateVerifyDiliveryOrderDetailsById: (id,date,time,callBack) => {
+  UpdateVerifyDiliveryOrderDetailsById: (id, date, time, callBack) => {
     // console.log(id);
     pool.query(
       `UPDATE Orders SET Status = 'DILIVERED',dilivery_Date=?,dilivery_Time=? WHERE Order_id = ? AND Status='VERIFYDILIVERY'`,
-      [date,time,id],
+      [date, time, id],
       (error, results) => {
         if (error) {
           return callBack(error);
@@ -352,36 +357,48 @@ module.exports = {
       }
     );
   },
-  getOrderTotalCost:(id,callback)=>{
-    pool.query(`SELECT Total_Cost,BranchUser_id FROM Orders WHERE Order_id=?`,[id],
-      (error,results)=>{
-        if(error){
+  getOrderTotalCost: (id, callback) => {
+    pool.query(
+      `SELECT Total_Cost,BranchUser_id FROM Orders WHERE Order_id=?`,
+      [id],
+      (error, results) => {
+        if (error) {
           return callback(error);
         }
-        return callback(null,results)
+        return callback(null, results);
       }
-    )
+    );
   },
-  UpdateUserEarnings:(id,price,callback)=>{
-    pool.query(`UPDATE BranchUser
+  UpdateUserEarnings: (id, price, callback) => {
+    pool.query(
+      `UPDATE BranchUser
       SET totalEarnings  =totalEarnings + ?
-      WHERE BranchUser_id=?`,[price,id],
-    (error,result)=>{
-      if(error){
-        callback(error)
+      WHERE BranchUser_id=?`,
+      [price, id],
+      (error, result) => {
+        if (error) {
+          callback(error);
+        }
+        // console.log(result);
+        return callback(null, result);
       }
-      // console.log(result);
-      return callback(null,result)
-    })
+    );
   },
-  EditPendingOrderDetailById: (data)=> {
+  EditPendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `update Orders SET Pickup_District=?,Pickup_StreetNo=?,Pickup_Street=?,Pickup_City=?,Emmergency=? where (Order_id=?)`,
-        [data.pdistrict,data.pstreetNo,data.pstreet,data.phometown,data.potype,data.OrID],
+        [
+          data.pdistrict,
+          data.pstreetNo,
+          data.pstreet,
+          data.phometown,
+          data.potype,
+          data.OrID,
+        ],
         (error, results, feilds) => {
           if (error) {
-            console.log(error)
+            console.log(error);
             reject(error);
           }
           resolve(results);
@@ -390,14 +407,14 @@ module.exports = {
     });
   },
 
-  EditcustomerPendingOrderDetailById: (data)=> {
+  EditcustomerPendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `update Customer SET FirstName=?,LastName=?,City=? where (cus_id=?)`,
-        [data.sfname,data.slname,data.scity,data.customerid],
+        [data.sfname, data.slname, data.scity, data.customerid],
         (error, results, feilds) => {
           if (error) {
-            console.log(error)
+            console.log(error);
             reject(error);
           }
           resolve(results);
@@ -406,14 +423,21 @@ module.exports = {
     });
   },
 
-  EditreciverPendingOrderDetailById: (data)=> {
+  EditreciverPendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `update Reciever SET DiliveryProvince=?,DiliveryDistrict=?,StreetNo=?,Street=?,City=? where (recieverId=?)`,
-        [data.rprovince,data.rdistric,data.rstreetNo,data.rstreet,data.rhometown,data.reciverid],
+        [
+          data.rprovince,
+          data.rdistric,
+          data.rstreetNo,
+          data.rstreet,
+          data.rhometown,
+          data.reciverid,
+        ],
         (error, results, feilds) => {
           if (error) {
-            console.log(error)
+            console.log(error);
             reject(error);
           }
           resolve(results);
@@ -422,14 +446,14 @@ module.exports = {
     });
   },
 
-  EditcustomermobilePendingOrderDetailById: (data)=> {
+  EditcustomermobilePendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `update CustomerMobile SET mobile=? where (cus_id=?)`,
-        [data.stelephone,data.customerid],
+        [data.stelephone, data.customerid],
         (error, results, feilds) => {
           if (error) {
-            console.log(error)
+            console.log(error);
             reject(error);
           }
           resolve(results);
@@ -438,15 +462,14 @@ module.exports = {
     });
   },
 
-  
-  EditrecivermobilePendingOrderDetailById: (data)=> {
+  EditrecivermobilePendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
         `update RecieverMobile SET mobile=? where (recieverId=?)`,
-        [data.rtelephone,data.reciverid],
+        [data.rtelephone, data.reciverid],
         (error, results, feilds) => {
           if (error) {
-            console.log(error)
+            console.log(error);
             reject(error);
           }
           resolve(results);
@@ -465,12 +488,11 @@ module.exports = {
     `;
 
     pool.query(query, (error, results, fields) => {
-        if (error) {
-            return callBack(error);
-        }
-        const counts = results[0];
-        return callBack(null, counts);
+      if (error) {
+        return callBack(error);
+      }
+      const counts = results[0];
+      return callBack(null, counts);
     });
-}
-
+  },
 };
