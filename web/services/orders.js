@@ -340,6 +340,7 @@ module.exports = {
     );
   },
   UpdateVerifyDiliveryOrderDetailsById: (id, date, time, callBack) => {
+    // console.log(id);
     pool.query(
       `UPDATE Orders SET Status = 'DILIVERED',dilivery_Date=?,dilivery_Time=? WHERE Order_id = ? AND Status='VERIFYDILIVERY'`,
       [date, time, id],
