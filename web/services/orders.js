@@ -60,7 +60,7 @@ module.exports = {
     });
   },
   OrderTable: (data, rid, sid) => {
-    if (data.pimergency === "Immergency") {
+    if (data.pimergency === "Emergency") {
       data.pimergency = "T";
     } else {
       data.pimergency = "F";
@@ -189,7 +189,6 @@ module.exports = {
   },
 
   getPendingorderdetailsById: (id, callBack) => {
-    // console.log(id);
     pool.query(
       `SELECT o.Order_id,c.cus_id,r.recieverId,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency
             FROM Customer c,CustomerMobile cm,Reciever r,RecieverMobile rm,Orders o 
@@ -199,7 +198,6 @@ module.exports = {
         if (error) {
           return callBack(error);
         }
-        // console.log(results);
         return callBack(null, results);
       }
     );
@@ -262,7 +260,6 @@ module.exports = {
   },
 
   UpdatePendingOrderDetailsById: (id, callBack) => {
-    // console.log(id);
     pool.query(
       `UPDATE Orders SET Status = 'PENDING' WHERE Order_id = ? AND Status='VERIFYCONFIRM'`,
       [id],
@@ -270,7 +267,6 @@ module.exports = {
         if (error) {
           return callBack(error);
         }
-        // console.log(results);
         return callBack(null, results);
       }
     );
@@ -352,7 +348,6 @@ module.exports = {
         if (error) {
           return callBack(error);
         }
-        // console.log(results)
         return callBack(null, results);
       }
     );
@@ -379,7 +374,6 @@ module.exports = {
         if (error) {
           callback(error);
         }
-        // console.log(result);
         return callback(null, result);
       }
     );
