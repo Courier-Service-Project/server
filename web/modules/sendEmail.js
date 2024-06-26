@@ -30,5 +30,34 @@ module.exports = {
         return callback(null,info);
       }
     });
+  },
+
+
+  sendadminMail:(values,callback) => {
+    let transporter = nodeMailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "ssshashini21@gmail.com",
+        pass: "nxtbmpobvwhkzwdj",
+      },
+    });
+
+    let adminMailOptions = {
+      from: "ssshashini21@gmial.com",
+      to: values.Email,
+      subject: `Congratulations ${values.FirstName}! You have been choosen up.`,
+      text: `Your ID: ${values.admin_Id}
+            Name: ${values.FirstName}
+            Your Password: ${values.originalPassword}
+            Use your email as your user name!`,
+    };
+
+    transporter.sendMail(adminMailOptions,(error, info) => {
+      if (error) {
+        return callback(error);
+      } else {
+        return callback(null,info);
+      }
+    });
   }
 };
