@@ -9,7 +9,7 @@ const {
   RecieverTele,
   getPendingOrdersList,
   getCompleteOrderList,
-  getInprogressOrderList,
+  getOnpickOrderList,
   getPendingorderdetailsById,
   getCompleteOrderdetailsById,
   getinprogressOrderdetailsById,
@@ -129,8 +129,8 @@ module.exports = {
       }
     });
   },
-  getInprogressOrderList: (req, res) => {
-    getInprogressOrderList((error, results) => {
+  getOnpickOrderList: (req, res) => {
+    getOnpickOrderList((error, results) => {
       if (error) {
         res.json({
           success: 0,
@@ -140,7 +140,7 @@ module.exports = {
       if (results.length == 0) {
         res.json({
           success: 101,
-          message: "no inprogress orders yet",
+          message: "no onpick orders yet",
         });
       } else if (results) {
         res.json({

@@ -4,7 +4,7 @@ const {
   CreateOrder,
   getPendingOrdersList,
   getCompleteOrderList,
-  getInprogressOrderList,
+  getOnpickOrderList,
   getPendingorderdetailsById,
   getCompleteOrderdetailsById,
   getinprogressOrderdetailsById,
@@ -25,7 +25,7 @@ webOrderRouter.get("/orderDetails/:orderId", getOrderDetailsById);
 webOrderRouter.post("/", CreateOrder);
 webOrderRouter.get("/pendingorderDetails", getPendingOrdersList);
 webOrderRouter.get("/completeorderDetails", getCompleteOrderList);
-webOrderRouter.get("/InprogressorderDetails", getInprogressOrderList);
+webOrderRouter.get("/InprogressorderDetails", getOnpickOrderList);
 webOrderRouter.get("/pendingorderdetailsbyid/:id", getPendingorderdetailsById);
 webOrderRouter.get(
   "/completeorderdetailsbyid/:id",
