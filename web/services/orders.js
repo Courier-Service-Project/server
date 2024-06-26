@@ -174,7 +174,7 @@ module.exports = {
     );
   },
 
-  getInprogressOrderList: (callBack) => {
+  getOnpickOrderList: (callBack) => {
     pool.query(
       `SELECT Order_id,Pickup_District,Pickup_City,FirstName
         FROM Orders,Customer
