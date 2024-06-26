@@ -3,9 +3,9 @@ const pool = require("../../config/dbConfig.js");
 module.exports = {
   getOrderDetailsById: (id, callBack) => {
     pool.query(
-      `SELECT Emmergency,Total_Cost,Weight_Cost,branchLocation,Pickup_StreetNo,Pickup_Street,Pickup_City,Status,FirstName,LastName,mobile,StreetNo,Street,City
-        FROM Orders,Reciever,RecieverMobile
-        WHERE Reciever.recieverId=Orders.recieverId AND Reciever.recieverId=RecieverMobile.recieverId AND Orders.Order_id = ?`,
+      `SELECT O.Emmergency AS Emmergency,O.Total_Cost AS Total_Cost,O.Weight_Cost AS Weight_Cost,O.branchLocation AS branchLocation,O.Pickup_StreetNo AS Pickup_StreetNo,O.Pickup_Street AS Pickup_Street,O.Pickup_City AS Pickup_City,O.Status AS Status,R.FirstName AS RFirstName,R.LastName AS RLastName,M.mobile AS Rmobile,R.StreetNo AS RStreetNo,R.Street AS RStreet,R.City AS RCity,C.FirstName AS CFirstName,C.LastName AS CLastName,C.StreetNo AS CStreetNo,C.Street AS CStreet,C.City AS CCity
+        FROM Orders O,Reciever R,RecieverMobile M,Customer C
+        WHERE R.recieverId=O.recieverId AND R.recieverId=M.recieverId AND C.cus_id=O.cus_id AND O.Order_id = ?`,
       [id],
       (error, results, feilds) => {
         if (error) {

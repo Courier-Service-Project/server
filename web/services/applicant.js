@@ -105,12 +105,12 @@ module.exports={
                 }
                 )
         },
-        postAdminData: (N_fname,N_lname,N_telephone,N_email,N_dob) => {
-            console.log(N_dob);
-            // console.log("im here...")
+        postAdminFormData: (N_fname, N_lname,N_admin, N_telephone, N_email,password) => {
+            //console.log(N_dob);
+            console.log("im here...")
             return new Promise((resolve,reject)=>{
-                pool.query(`INSERT INTO Admin(FirstName,LastName,Tele,Email) VALUES(?,?,?,?)`,
-                [N_fname,N_lname,N_telephone,N_email],
+                pool.query(`INSERT INTO Admin(FirstName,LastName,Password,type,Tele,Email) VALUES(?,?,?,?,?,?)`,
+                [N_fname, N_lname,password,N_admin, N_telephone, N_email],
                 (error,result,feilds)=>{
                     if(error){
                     reject (error)
@@ -255,6 +255,44 @@ module.exports={
                 })
             })
         },
+        getMailDatailsForAdmin: (admin_Id,callback) => {
+            pool.query(`SELECT admin_Id,FirstName,Email
+                FROM Admin WHERE admin_Id=?`,
+                [admin_Id],(error,result,feilds) => {
+                    if(error){
+                    return callback(error)
+                    }
+                    console.log(result);
+                    return callback(null,result)
+                }
+            )
+        },
+        checkAdminEmail: (N_email) => {
+            console.log(N_email)
+            return new Promise((resolve,reject) => {
+                pool.query(`SELECT 1 FROM Admin WHERE Email=? LIMIT 1`,
+                [N_email],(error,result,feilds) =>{
+                    if(error){
+                        reject(error)
+                    }
+                    console.log(result.length)
+                    resolve(result.length>0)
+                }
+                )
+            })
+        },
+        getAdminId: (Email) => {
+            return new Promise((resolve,reject) => {
+                pool.query(`SELECT admin_Id FROM Admin WHERE Email=?`,[Email],
+                    (error,result,feilds)=>{
+                    if(error){
+                        reject(error)
+                    }
+                    resolve(result)
+                    }
+                )
+            })
+        }
 
 
 
