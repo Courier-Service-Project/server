@@ -12,7 +12,7 @@ const {
   getOnpickOrderList,
   getPendingorderdetailsById,
   getCompleteOrderdetailsById,
-  getinprogressOrderdetailsById,
+  getOnpickOrderdetailsById,
   DeletePendingOrderDetailsById,
   UpdatePendingOrderDetailsById,
   getVerifyPickedOrderList,
@@ -28,7 +28,9 @@ const {
   EditrecivermobilePendingOrderDetailById,
   getOrderTotalCost,
   UpdateUserEarnings,
-  getOrderCounts
+  getOrderCounts,
+  getOndiliveryOrderList,
+  getOnDiliveryOrderDetailById
 } = require("../services/orders");
 
 module.exports = {
@@ -56,24 +58,22 @@ module.exports = {
   },
 
   CreateOrder: async (req, res) => {
-   
     const data = req.body;
     //console.log(data)
-   
-    try {
-        await SenderTable(data);
-        await RecieverTable(data);
-        const senderID = await GetsenderID();
-        const recieverID = await GetRecieverID();
-        await SenderTele(senderID,data.stelephone)
-        await RecieverTele(recieverID,data.rtelephone)
-        await OrderTable(data,recieverID,senderID)
-        
-        return res.json({
-            success:1,
-            message: "order placed successfully",
-        })
 
+    try {
+      await SenderTable(data);
+      await RecieverTable(data);
+      const senderID = await GetsenderID();
+      const recieverID = await GetRecieverID();
+      await SenderTele(senderID, data.stelephone);
+      await RecieverTele(recieverID, data.rtelephone);
+      await OrderTable(data, recieverID, senderID);
+
+      return res.json({
+        success: 1,
+        message: "order placed successfully",
+      });
     } catch (error) {
       return res.json({
         success: 0,
@@ -200,10 +200,10 @@ module.exports = {
     });
   },
 
-  getinprogressOrderdetailsById: (req, res) => {
+  getOnpickOrderdetailsById: (req, res) => {
     const id = req.params.id;
     // console.log(id);
-    getinprogressOrderdetailsById(id, (error, results) => {
+    getOnpickOrderdetailsById(id, (error, results) => {
       if (error) {
         res.json({
           success: 0,
@@ -268,22 +268,20 @@ module.exports = {
     });
   },
 
-  EditPendindOrder: async (req, res) => {  
+  EditPendindOrder: async (req, res) => {
     const data = req.body;
-  
+
     try {
-   
-        await EditPendingOrderDetailById(data);
-        await EditcustomerPendingOrderDetailById(data);
-        await EditreciverPendingOrderDetailById(data);
-        await EditcustomermobilePendingOrderDetailById(data);
-        await EditrecivermobilePendingOrderDetailById(data);
+      await EditPendingOrderDetailById(data);
+      await EditcustomerPendingOrderDetailById(data);
+      await EditreciverPendingOrderDetailById(data);
+      await EditcustomermobilePendingOrderDetailById(data);
+      await EditrecivermobilePendingOrderDetailById(data);
 
-        return res.json({
-            success:1,
-            message: "update Successfull",
-        })
-
+      return res.json({
+        success: 1,
+        message: "update Successfull",
+      });
     } catch (error) {
       return res.json({
         success: 0,
@@ -402,52 +400,59 @@ module.exports = {
   },
   UpdateVerifyDiliveryOrderDetailsById: (req, res) => {
     const id = req.params.id;
-    const date=`${new Date().getFullYear().toString()}-${(new Date().getMonth()+1).toString()}-${new Date().getDate().toString()}`
-    const time=`${new Date().getHours()}:${new Date().getMinutes()}`
-    UpdateVerifyDiliveryOrderDetailsById(id,date,time, (error, results) => {
+    const date = `${new Date().getFullYear().toString()}-${(
+      new Date().getMonth() + 1
+    ).toString()}-${new Date().getDate().toString()}`;
+    const time = `${new Date().getHours()}:${new Date().getMinutes()}`;
+    UpdateVerifyDiliveryOrderDetailsById(id, date, time, (error, results) => {
       if (error) {
         res.json({
           success: 0,
           message: error,
         });
       } else if (results.affectedRows > 0) {
-        getOrderTotalCost(id,(error,results)=>{
-          if(error){
+        getOrderTotalCost(id, (error, results) => {
+          if (error) {
             res.json({
-              success:0,
-              message:error
-            })
-          }if(results.length>0){
+              success: 0,
+              message: error,
+            });
+          }
+          if (results.length > 0) {
             // console.log(results[0].Total_Cost);
             // console.log(results[0].BranchUser_id);
-            UpdateUserEarnings(results[0].BranchUser_id,results[0].Total_Cost,(error,result)=>{
-              if(error){
-                // console.log(error);
-                res.json({
-                  success:0,
-                  message:error
-                })
-              }else if(result){
-                // console.log(result);
-                res.json({
-                  success:200,
-                  message:"successfully inserted"
-                })
-              }else{
-                // console.log('no');
-                res.json({
-                  success:101,
-                  message:'Earning update failed'
-                })
+            UpdateUserEarnings(
+              results[0].BranchUser_id,
+              results[0].Total_Cost,
+              (error, result) => {
+                if (error) {
+                  // console.log(error);
+                  res.json({
+                    success: 0,
+                    message: error,
+                  });
+                } else if (result) {
+                  // console.log(result);
+                  res.json({
+                    success: 200,
+                    message: "successfully inserted",
+                  });
+                } else {
+                  // console.log('no');
+                  res.json({
+                    success: 101,
+                    message: "Earning update failed",
+                  });
+                }
               }
-            })
-          }else{
+            );
+          } else {
             res.json({
-              success:101,
-              message:"Price doesn't found"
-            })
+              success: 101,
+              message: "Price doesn't found",
+            });
           }
-        })
+        });
       } else {
         res.json({
           success: 101,
@@ -456,18 +461,63 @@ module.exports = {
       }
     });
   },
-  getOrderCounts: (req ,res) =>{
-    getOrderCounts((error,result) => {
-        if(error){
-            res.json({
-                success:0,
-                message:error,
-            })
-        }
-        return res.json({
-            success: 200,
-            message: result,
+  getOrderCounts: (req, res) => {
+    getOrderCounts((error, result) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
         });
-    })
-  }
+      }
+      return res.json({
+        success: 200,
+        message: result,
+      });
+    });
+  },
+  getOndiliveryOrderList: (req, res) => {
+    getOndiliveryOrderList((error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "no ondilivery orders yet",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
+    });
+  },
+  getOnDiliveryOrderDetailById: (req, res) => {
+    // console.log(req);
+    const id = req.params.id;
+    // console.log("id", id);
+    getOnDiliveryOrderDetailById(id, (error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "invalid order id",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
+    });
+  },
 };

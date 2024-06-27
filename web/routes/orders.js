@@ -7,7 +7,7 @@ const {
   getOnpickOrderList,
   getPendingorderdetailsById,
   getCompleteOrderdetailsById,
-  getinprogressOrderdetailsById,
+  getOnpickOrderdetailsById,
   DeletePendingOrderDetailsById,
   UpdatePendingOrderDetailsById,
   EditPendindOrder,
@@ -18,6 +18,8 @@ const {
   getVerifyDiliveryOrderListById,
   UpdateVerifyDiliveryOrderDetailsById,
   getOrderCounts,
+  getOndiliveryOrderList,
+  getOnDiliveryOrderDetailById
 } = require("../controllers/orders.js");
 const { protect, allowRoles } = require("../middleware/auth.js");
 
@@ -25,16 +27,13 @@ webOrderRouter.get("/orderDetails/:orderId", getOrderDetailsById);
 webOrderRouter.post("/", CreateOrder);
 webOrderRouter.get("/pendingorderDetails", getPendingOrdersList);
 webOrderRouter.get("/completeorderDetails", getCompleteOrderList);
-webOrderRouter.get("/InprogressorderDetails", getOnpickOrderList);
+webOrderRouter.get("/OnpickorderDetails", getOnpickOrderList);
 webOrderRouter.get("/pendingorderdetailsbyid/:id", getPendingorderdetailsById);
 webOrderRouter.get(
   "/completeorderdetailsbyid/:id",
   getCompleteOrderdetailsById
 );
-webOrderRouter.get(
-  "/inprogressorderdetailsbyid/:id",
-  getinprogressOrderdetailsById
-);
+webOrderRouter.get("/Onpickorderdetailsbyid/:id", getOnpickOrderdetailsById);
 webOrderRouter.delete(
   "/deletependingorderdetails/:id",
   DeletePendingOrderDetailsById
@@ -63,5 +62,7 @@ webOrderRouter.patch(
   UpdateVerifyDiliveryOrderDetailsById
 );
 webOrderRouter.get("/orderCounts", getOrderCounts);
+webOrderRouter.get("/OndiliveryorderDetails", getOndiliveryOrderList);
+webOrderRouter.get("/OndiliveryorderDetailbyid/:id", getOnDiliveryOrderDetailById);
 
 module.exports = webOrderRouter;
