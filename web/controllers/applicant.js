@@ -6,7 +6,7 @@ const { getApplicantDetails,
         checkApplicantVehicle,
         deleteApplicantPerson,
         checkApplicantMobile,
-        postAdminData,
+        postAdminFormData,
         getApplicantDetailsById,
         postRegisteredPerData,
         getRegisteredId,
@@ -16,11 +16,14 @@ const { getApplicantDetails,
         getMailDatailsForBranchUser,
         postRegVehicleNo,
         getApplicantCount,
-        getRegCount
+        getRegCount,
+        checkAdminEmail,
+        getAdminId,
+        getMailDatailsForAdmin
 } = require("../services/applicant.js");
 const { genSaltSync, hashSync} = require("bcrypt");
 const createPassword = require("../../utils/passwordGenerate.js");
-const { sendBranchUserMail } = require("../modules/sendEmail.js");
+const { sendBranchUserMail,sendadminMail } = require("../modules/sendEmail.js");
 require('dotenv').config()
 
 module.exports = {
@@ -123,21 +126,74 @@ module.exports = {
     },
 
     postAdminData: async (req, res) => {
-        const { N_fname, N_lname, N_telephone, N_email, N_password, N_dob } = req.body.values;
+        let password=createPassword(12,true,true)
+        let originalPassword = password
+        console.log(password)
+        const salt = genSaltSync(10);
+        password = hashSync(password,salt); 
+        const { N_fname, N_lname,N_admin, N_telephone, N_email, N_dob } = req.body.values;
         const date = new Date(N_dob).getFullYear().toString() + "-" + new Date(N_dob).getMonth().toString() + "-" + new Date(N_dob).getDate().toString();
         console.log(date);
         try {
-            const result = await postAdminData(N_fname, N_lname, N_telephone, N_email, date);
-            console.log(result);
-            console.log("yesss")
-            return res.json({
-                success: 200,
-                message: "successfully inserted"
-            })
+            const checkEmail = await checkAdminEmail(N_email)
+            console.log(checkEmail)
+            console.log("email")
+            if(!checkEmail){
+                console.log("check email is not duplicate")
+                const result = await postAdminFormData(N_fname, N_lname,N_admin, N_telephone, N_email,password);
+                console.log(result);
+                console.log("admin data")
+                if(result.affectedRows>0){
+                    const AdminId = await getAdminId(N_email)
+                    console.log("admin id:"+AdminId[0].admin_Id)
+                    getMailDatailsForAdmin(AdminId[0].admin_Id,(error,result) => {
+                        if(error){
+                            return res.json({
+                            success:0,
+                            message:"Get mail delails is not success"
+                            })
+                        }
+                        
+                        else if(result){
+                            console.log(result)
+                            console.log(originalPassword)
+                            const{ admin_Id,FirstName,Email}= result[0]
+                            const adminMail = {admin_Id,FirstName,Email,originalPassword}
+                            sendadminMail(adminMail,(error,result)=>{
+                            if(error){
+                                return res.json({
+                                success:0,
+                                message:"Send mail is not successfull"
+                                })
+                            }
+                            if(result){
+                                console.log(result);
+                            }
+                            })
+                        }
+                        else{
+                            res.json({
+                            success:101,
+                            message:"No admin data found"
+                            })
+                        }
+                    })
+                }else {
+                    return res.json({
+                    success: 101,
+                    message: 'Form not successfully inserted....'
+                    })
+                }
+            }else{
+                return res.json({
+                    success: 101,
+                    message: "Duplicate Email."
+                })
+            }
             } catch (error) {
             return res.json({
                 success: 0,
-                message: error,
+                message: "Catch error",
             })
         }
     },

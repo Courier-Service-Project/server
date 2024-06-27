@@ -9,10 +9,10 @@ const {
   RecieverTele,
   getPendingOrdersList,
   getCompleteOrderList,
-  getInprogressOrderList,
+  getOnpickOrderList,
   getPendingorderdetailsById,
   getCompleteOrderdetailsById,
-  getinprogressOrderdetailsById,
+  getOnpickOrderdetailsById,
   DeletePendingOrderDetailsById,
   UpdatePendingOrderDetailsById,
   getVerifyPickedOrderList,
@@ -29,6 +29,8 @@ const {
   getOrderTotalCost,
   UpdateUserEarnings,
   getOrderCounts,
+  getOndiliveryOrderList,
+  getOnDiliveryOrderDetailById,
 } = require("../services/orders");
 
 module.exports = {
@@ -125,8 +127,8 @@ module.exports = {
       }
     });
   },
-  getInprogressOrderList: (req, res) => {
-    getInprogressOrderList((error, results) => {
+  getOnpickOrderList: (req, res) => {
+    getOnpickOrderList((error, results) => {
       if (error) {
         res.json({
           success: 0,
@@ -136,7 +138,7 @@ module.exports = {
       if (results.length == 0) {
         res.json({
           success: 101,
-          message: "no inprogress orders yet",
+          message: "no onpick orders yet",
         });
       } else if (results) {
         res.json({
@@ -196,10 +198,10 @@ module.exports = {
     });
   },
 
-  getinprogressOrderdetailsById: (req, res) => {
+  getOnpickOrderdetailsById: (req, res) => {
     const id = req.params.id;
     // console.log(id);
-    getinprogressOrderdetailsById(id, (error, results) => {
+    getOnpickOrderdetailsById(id, (error, results) => {
       if (error) {
         res.json({
           success: 0,
@@ -469,6 +471,51 @@ module.exports = {
         success: 200,
         message: result,
       });
+    });
+  },
+  getOndiliveryOrderList: (req, res) => {
+    getOndiliveryOrderList((error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "no ondilivery orders yet",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
+    });
+  },
+  getOnDiliveryOrderDetailById: (req, res) => {
+    // console.log(req);
+    const id = req.params.id;
+    // console.log("id", id);
+    getOnDiliveryOrderDetailById(id, (error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "invalid order id",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
     });
   },
 };

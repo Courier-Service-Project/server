@@ -2,9 +2,9 @@ const pool = require("../../config/dbConfig.js");
 module.exports = {
   getOrderDetailsById: (id, callBack) => {
     pool.query(
-      `SELECT Emmergency,Total_Cost,Weight_Cost,branchLocation,Pickup_StreetNo,Pickup_Street,Pickup_City,Status,FirstName,LastName,mobile,StreetNo,Street,City
-        FROM Orders,Reciever,RecieverMobile
-        WHERE Reciever.recieverId=Orders.recieverId AND Reciever.recieverId=RecieverMobile.recieverId AND Orders.Order_id = ?`,
+      `SELECT O.Emmergency AS Emmergency,O.Total_Cost AS Total_Cost,O.Weight_Cost AS Weight_Cost,O.branchLocation AS branchLocation,O.Pickup_StreetNo AS Pickup_StreetNo,O.Pickup_Street AS Pickup_Street,O.Pickup_City AS Pickup_City,O.Status AS Status,R.FirstName AS RFirstName,R.LastName AS RLastName,M.mobile AS Rmobile,R.StreetNo AS RStreetNo,R.Street AS RStreet,R.City AS RCity,C.FirstName AS CFirstName,C.LastName AS CLastName,C.StreetNo AS CStreetNo,C.Street AS CStreet,C.City AS CCity
+        FROM Orders O,Reciever R,RecieverMobile M,Customer C
+        WHERE R.recieverId=O.recieverId AND R.recieverId=M.recieverId AND C.cus_id=O.cus_id AND O.Order_id = ?`,
       [id],
       (error, results, feilds) => {
         if (error) {
@@ -174,7 +174,7 @@ module.exports = {
     );
   },
 
-  getInprogressOrderList: (callBack) => {
+  getOnpickOrderList: (callBack) => {
     pool.query(
       `SELECT Order_id,Pickup_District,Pickup_City,FirstName
         FROM Orders,Customer
@@ -218,7 +218,7 @@ module.exports = {
     );
   },
 
-  getinprogressOrderdetailsById: (id, callBack) => {
+  getOnpickOrderdetailsById: (id, callBack) => {
     pool.query(
       `SELECT o.Order_id,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency
              FROM Customer c,CustomerMobile cm,Reciever r,RecieverMobile rm,Orders o 
@@ -488,5 +488,32 @@ module.exports = {
       const counts = results[0];
       return callBack(null, counts);
     });
+  },
+  getOndiliveryOrderList: (callBack) => {
+    pool.query(
+      `SELECT Order_id,Pickup_District,Pickup_City,FirstName
+        FROM Orders,Customer
+        WHERE Customer.cus_id=Orders.cus_id AND Orders.Status = "ONDILIVERY"`,
+      (error, results) => {
+        if (error) {
+          return callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
+  getOnDiliveryOrderDetailById: (id, callBack) => {
+    pool.query(
+      `SELECT o.Order_id,c.cus_id,r.recieverId,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency
+            FROM Customer c,CustomerMobile cm,Reciever r,RecieverMobile rm,Orders o 
+            WHERE o.Order_id=? AND o.Status=? AND o.cus_id=c.cus_id AND o.recieverId=r.recieverId AND c.cus_id=cm.cus_id  AND r.recieverId=rm.recieverId`,
+      [id, "ONDILIVERY"],
+      (error, results, fields) => {
+        if (error) {
+          return callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
   },
 };
