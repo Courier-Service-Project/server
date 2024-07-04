@@ -32,7 +32,7 @@ const {
   getOndiliveryOrderList,
   getOnDiliveryOrderDetailById,
   getOnBranchOrderList,
-  getOnBranchOrderDetailbyid
+  getOnBranchOrderDetailbyid,
 } = require("../services/orders");
 
 module.exports = {
@@ -61,8 +61,6 @@ module.exports = {
 
   CreateOrder: async (req, res) => {
     const data = req.body;
-    //console.log(data)
-
     try {
       await SenderTable(data);
       await RecieverTable(data);
