@@ -2,7 +2,8 @@ const webOrderRouter = require("express").Router();
 const {
   getOrderDetailsById,
   CreateOrder,
-  getPendingOrdersList,
+  getEPendingOrdersList,
+  getNEPendingOrdersList,
   getCompleteOrderList,
   getOnpickOrderList,
   getPendingorderdetailsById,
@@ -27,7 +28,8 @@ const { protect, allowRoles } = require("../middleware/auth.js");
 
 webOrderRouter.get("/orderDetails/:orderId", getOrderDetailsById);
 webOrderRouter.post("/", CreateOrder);
-webOrderRouter.get("/pendingorderDetails", getPendingOrdersList);
+webOrderRouter.get("/EpendingorderDetails", getEPendingOrdersList);
+webOrderRouter.get("/NEpendingorderDetails", getNEPendingOrdersList);
 webOrderRouter.get("/completeorderDetails", getCompleteOrderList);
 webOrderRouter.get("/OnpickorderDetails", getOnpickOrderList);
 webOrderRouter.get("/pendingorderdetailsbyid/:id", getPendingorderdetailsById);

@@ -146,11 +146,24 @@ module.exports = {
     });
   },
 
-  getPendingOrdersList: (callBack) => {
+  getEPendingOrdersList: (callBack) => {
     pool.query(
       `SELECT Order_id,Pickup_District,Pickup_City,FirstName
         FROM Orders,Customer
-        WHERE Customer.cus_id=Orders.cus_id AND Orders.Status = "VERIFYCONFIRM"`,
+        WHERE Customer.cus_id=Orders.cus_id AND Orders.Status = "VERIFYCONFIRM" AND Orders.Emmergency = "T" `,
+      (error, results, feilds) => {
+        if (error) {
+          return callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
+  getNEPendingOrdersList: (callBack) => {
+    pool.query(
+      `SELECT Order_id,Pickup_District,Pickup_City,FirstName
+        FROM Orders,Customer
+        WHERE Customer.cus_id=Orders.cus_id AND Orders.Status = "VERIFYCONFIRM" AND Orders.Emmergency = "F" `,
       (error, results, feilds) => {
         if (error) {
           return callBack(error);

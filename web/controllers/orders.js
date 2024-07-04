@@ -7,7 +7,8 @@ const {
   GetRecieverID,
   SenderTele,
   RecieverTele,
-  getPendingOrdersList,
+  getEPendingOrdersList,
+  getNEPendingOrdersList,
   getCompleteOrderList,
   getOnpickOrderList,
   getPendingorderdetailsById,
@@ -84,8 +85,8 @@ module.exports = {
     }
   },
 
-  getPendingOrdersList: (req, res) => {
-    getPendingOrdersList((error, results) => {
+  getEPendingOrdersList: (req, res) => {
+    getEPendingOrdersList((error, results) => {
       // console.log(results);
       if (error) {
         // console.log("this is error");
@@ -99,6 +100,31 @@ module.exports = {
         res.json({
           success: 101,
           message: "no pending orders yet",
+        });
+      } else if (results) {
+        // console.log(results);
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
+    });
+  },
+  getNEPendingOrdersList: (req, res) => {
+    getNEPendingOrdersList((error, results) => {
+      // console.log(results);
+      if (error) {
+        // console.log("this is error");
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        // console.log("no pending orders yet");
+        res.json({
+          success: 101,
+          message: "no Non Energency pending orders yet",
         });
       } else if (results) {
         // console.log(results);
