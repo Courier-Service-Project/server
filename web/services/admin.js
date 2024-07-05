@@ -5,7 +5,7 @@ module.exports = {
   CheckUsernamePassword: (username, callback) => {
     // console.log(username)
     pool.query(
-      `SELECT password,admin_Id From Admin WHERE Email=?`,
+      `SELECT password,admin_Id,type,FirstName From Admin WHERE Email=?`,
       [username],
       (error, result, feilds) => {
         if (error) {

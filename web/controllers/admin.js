@@ -31,6 +31,8 @@ module.exports = {
       }
 
       if (result) {
+        console.log(result[0].type);
+
         const payload = {
           user: {
             admnID: req.body.userName,
@@ -45,6 +47,8 @@ module.exports = {
             success: 1,
             message: "correct password",
             adminID: result[0].admin_Id,
+            type: result[0].type,
+            name: result[0].FirstName,
             accessToken: accessToken,
           });
         } else {

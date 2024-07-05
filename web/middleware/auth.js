@@ -16,23 +16,26 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, jwtSecret);
 
       if (!decoded) {
-        return res
-          .status(404)
-          .json({ success: false, message: "User not found with this token" });
+        return res.json({
+          success: false,
+          message: "User not found with this token",
+        });
       }
 
       req.user = decoded;
       //   console.log("Decode " + decoded);
+      console.log("next");
 
       next();
     } catch (error) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Not authorized, token failed" });
+      return res.json({
+        success: false,
+        message: "Not authorized, token failed",
+      });
     }
   } else {
-    return res.status(401).json({
-      success: false,
+    return res.json({
+      success: 0,
       message: "No token provided, authorization denied",
     });
   }
@@ -40,10 +43,11 @@ const protect = async (req, res, next) => {
 
 const allowRoles = (...roles) => {
   return (req, res, next) => {
-    // console.log(req.user.user.role);
+    //console.log(req.user.user.role);
     if (!roles.includes(req.user.user.role)) {
-      return res.status(403).json({
-        success: false,
+      //console.log("Not authorized to access this route");
+      return res.json({
+        success: 0,
         message: "Not authorized to access this route",
       });
     }
