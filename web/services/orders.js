@@ -2,9 +2,41 @@ const pool = require("../../config/dbConfig.js");
 module.exports = {
   getOrderDetailsById: (id, callBack) => {
     pool.query(
-      `SELECT O.Emmergency AS Emmergency,O.Total_Cost AS Total_Cost,O.Weight_Cost AS Weight_Cost,O.branchLocation AS branchLocation,O.Pickup_StreetNo AS Pickup_StreetNo,O.Pickup_Street AS Pickup_Street,O.Pickup_City AS Pickup_City,O.Status AS Status,R.FirstName AS RFirstName,R.LastName AS RLastName,M.mobile AS Rmobile,R.StreetNo AS RStreetNo,R.Street AS RStreet,R.City AS RCity,C.FirstName AS CFirstName,C.LastName AS CLastName,C.StreetNo AS CStreetNo,C.Street AS CStreet,C.City AS CCity
-        FROM Orders O,Reciever R,RecieverMobile M,Customer C
-        WHERE R.recieverId=O.recieverId AND R.recieverId=M.recieverId AND C.cus_id=O.cus_id AND O.Order_id = ?`,
+      `SELECT O.Order_id AS Order_id,
+              O.Emmergency AS Emmergency,
+              O.Total_Cost AS Total_Cost,
+              O.Weight_Cost AS Weight_Cost,
+              O.branchLocation AS branchLocation,
+              O.Pickup_StreetNo AS Pickup_StreetNo,
+              O.Pickup_Street AS Pickup_Street,
+              O.Pickup_City AS Pickup_City,
+              O.Pickup_District AS Pickup_District,
+              O.Status AS Status,
+              R.FirstName AS RFirstName,
+              R.LastName AS RLastName,
+              M.mobile AS Rmobile,
+              R.StreetNo AS RStreetNo,
+              R.Street AS RStreet,
+              R.City AS RCity,
+              R.DiliveryProvince AS RDiliveryProvince,
+              R.DiliveryDistrict AS RDiliveryDistrict,
+              C.FirstName AS CFirstName,
+              C.LastName AS CLastName,
+              C.StreetNo AS CStreetNo,
+              C.Street AS CStreet,
+              C.City AS CCity,
+              CM.mobile AS Cust_mobile,
+              B.FirstName AS BFirstName,
+              B.LastName AS BLastName,
+              BM.Mobile AS BMobile
+        FROM Orders O
+          LEFT JOIN Reciever R ON R.recieverId=O.recieverId
+          LEFT JOIN RecieverMobile M ON R.recieverId=M.recieverId
+          LEFT JOIN Customer C ON C.cus_id=O.cus_id
+          LEFT JOIN CustomerMobile CM ON C.cus_id=CM.cus_id
+          LEFT JOIN BranchUser B ON O.BranchUser_id=B.BranchUser_id
+          LEFT JOIN BranchUserMobile BM ON B.BranchUser_id=BM.BranchUser_id
+          WHERE O.Order_id = ?`,
       [id],
       (error, results, feilds) => {
         if (error) {
@@ -474,6 +506,7 @@ module.exports = {
   getOrderCounts: (callBack) => {
     const query = `
         SELECT 
+            COUNT(CASE WHEN Status = 'VERIFYCONFIRM' THEN 1 END) AS verifyConfirmCount,
             COUNT(CASE WHEN Status = 'PENDING' THEN 1 END) AS pendingCount,
             COUNT(CASE WHEN Status = 'ONPICK' THEN 1 END) AS onpickCount,
             COUNT(CASE WHEN Status = 'ONDILIVERY' THEN 1 END) AS ondiliveryCount,
@@ -516,4 +549,39 @@ module.exports = {
       }
     );
   },
+  getMonthlyOrderCount:(callBack) => {
+    pool.query(`SELECT
+          m.Month,
+          COALESCE(COUNT(o.dilivery_Date), 0) AS OrderCount
+      FROM 
+          (SELECT DISTINCT YEAR(dilivery_Date) AS Year FROM Orders WHERE Status = 'DILIVERED') y
+      CROSS JOIN 
+          (SELECT 'Jan' AS Month, 1 AS MonthNumber
+          UNION SELECT 'Feb', 2
+          UNION SELECT 'Mar', 3
+          UNION SELECT 'Apr', 4
+          UNION SELECT 'May', 5
+          UNION SELECT 'Jun', 6
+          UNION SELECT 'Jul', 7
+          UNION SELECT 'Aug', 8
+          UNION SELECT 'Sept', 9
+          UNION SELECT 'Oct', 10
+          UNION SELECT 'Nov', 11
+          UNION SELECT 'Dec', 12) m
+      LEFT JOIN 
+          Orders o ON y.Year = YEAR(o.dilivery_Date) AND m.MonthNumber = MONTH(o.dilivery_Date) AND o.Status = 'DILIVERED'
+      GROUP BY 
+          y.Year, m.Month, m.MonthNumber
+      ORDER BY 
+          y.Year, m.MonthNumber;
+      `,
+      [],
+      (error, results, feilds) => {
+        if (error) {
+          return callBack(error);
+        }
+        console.log(results)
+        return callBack(null, results);
+      });
+  }
 };

@@ -30,7 +30,8 @@ const {
   UpdateUserEarnings,
   getOrderCounts,
   getOndiliveryOrderList,
-  getOnDiliveryOrderDetailById
+  getOnDiliveryOrderDetailById,
+  getMonthlyOrderCount
 } = require("../services/orders");
 
 module.exports = {
@@ -520,4 +521,18 @@ module.exports = {
       }
     });
   },
+  getMonthlyOrderCount: (req,res) => {
+    getMonthlyOrderCount((error,result)=>{
+      if(error){
+        res.json({
+          success:0,
+          message:error,
+        })
+      }
+      return res.json({
+        success:200,
+        message:result,
+      })
+    })
+  }
 };
