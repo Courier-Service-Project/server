@@ -31,7 +31,9 @@ const {
   getOrderCounts,
   getOndiliveryOrderList,
   getOnDiliveryOrderDetailById,
-  getMonthlyOrderCount
+  getMonthlyOrderCount,
+  getOnBranchOrderList,
+  getOnBranchOrderDetailbyid,
 } = require("../services/orders");
 
 module.exports = {
@@ -60,8 +62,6 @@ module.exports = {
 
   CreateOrder: async (req, res) => {
     const data = req.body;
-    //console.log(data)
-
     try {
       await SenderTable(data);
       await RecieverTable(data);
@@ -87,14 +87,14 @@ module.exports = {
     getPendingOrdersList((error, results) => {
       // console.log(results);
       if (error) {
-        console.log("this is error");
+        // console.log("this is error");
         res.json({
           success: 0,
           message: error,
         });
       }
       if (results.length == 0) {
-        console.log("no pending orders yet");
+        // console.log("no pending orders yet");
         res.json({
           success: 101,
           message: "no pending orders yet",
@@ -521,18 +521,63 @@ module.exports = {
       }
     });
   },
-  getMonthlyOrderCount: (req,res) => {
-    getMonthlyOrderCount((error,result)=>{
-      if(error){
+  getOnBranchOrderList: (req, res) => {
+    getOnBranchOrderList((error, results) => {
+      if (error) {
         res.json({
-          success:0,
-          message:error,
-        })
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "no onbranch orders yet",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
+    });
+  },
+  getOnBranchOrderDetailbyid: (req, res) => {
+    // console.log(req);
+    const id = req.params.id;
+    // console.log("id", id);
+    getOnBranchOrderDetailbyid(id, (error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results.length == 0) {
+        res.json({
+          success: 101,
+          message: "invalid order id",
+        });
+      } else if (results) {
+        res.json({
+          success: 200,
+          message: results,
+        });
+      }
+    });
+  },
+  getMonthlyOrderCount: (req, res) => {
+    getMonthlyOrderCount((error, result) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
       }
       return res.json({
-        success:200,
-        message:result,
-      })
-    })
-  }
+        success: 200,
+        message: result,
+      });
+    });
+  },
 };

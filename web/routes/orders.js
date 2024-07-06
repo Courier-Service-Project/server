@@ -20,8 +20,12 @@ const {
   getOrderCounts,
   getOndiliveryOrderList,
   getOnDiliveryOrderDetailById,
-  getMonthlyOrderCount
+  getMonthlyOrderCount,
+  getOnBranchOrderList,
+  getOnBranchOrderDetailbyid,
 } = require("../controllers/orders.js");
+// protect, allowRoles("superAdmin"),
+
 const { protect, allowRoles } = require("../middleware/auth.js");
 
 webOrderRouter.get("/orderDetails/:orderId", getOrderDetailsById);
@@ -64,7 +68,12 @@ webOrderRouter.patch(
 );
 webOrderRouter.get("/orderCounts", getOrderCounts);
 webOrderRouter.get("/OndiliveryorderDetails", getOndiliveryOrderList);
-webOrderRouter.get("/OndiliveryorderDetailbyid/:id", getOnDiliveryOrderDetailById);
+webOrderRouter.get(
+  "/OndiliveryorderDetailbyid/:id",
+  getOnDiliveryOrderDetailById
+);
+webOrderRouter.get("/OnBranchOrderDetails", getOnBranchOrderList);
+webOrderRouter.get("/OnBranchOrderDetailsbyid/:id", getOnBranchOrderDetailbyid);
 webOrderRouter.get("/MonthlyOrderCount", getMonthlyOrderCount);
 
 module.exports = webOrderRouter;

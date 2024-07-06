@@ -34,14 +34,13 @@ module.exports = {
         const payload = {
           user: {
             admnID: req.body.userName,
-            role: "superAdmin",
+            role: "Admin",
           },
         };
         if (compareSync(req.body.password, result[0].password)) {
           var accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: "1d",
           });
-          //console.log(accessToken);
           return res.json({
             success: 1,
             message: "correct password",

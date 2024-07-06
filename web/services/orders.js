@@ -222,7 +222,7 @@ module.exports = {
 
   getPendingorderdetailsById: (id, callBack) => {
     pool.query(
-      `SELECT o.Order_id,c.cus_id,r.recieverId,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency
+      `SELECT o.Order_id,c.cus_id,r.recieverId,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency,o.branchLocation
             FROM Customer c,CustomerMobile cm,Reciever r,RecieverMobile rm,Orders o 
             WHERE o.Order_id=? AND o.Status=? AND o.cus_id=c.cus_id AND o.recieverId=r.recieverId AND c.cus_id=cm.cus_id  AND r.recieverId=rm.recieverId`,
       [id, "VERIFYCONFIRM"],
@@ -413,13 +413,14 @@ module.exports = {
   EditPendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        `update Orders SET Pickup_District=?,Pickup_StreetNo=?,Pickup_Street=?,Pickup_City=?,Emmergency=? where (Order_id=?)`,
+        `update Orders SET Pickup_District=?,Pickup_StreetNo=?,Pickup_Street=?,Pickup_City=?,Emmergency=?,branchLocation=? where (Order_id=?)`,
         [
           data.pdistrict,
           data.pstreetNo,
           data.pstreet,
           data.phometown,
           data.potype,
+          data.blocation,
           data.OrID,
         ],
         (error, results, feilds) => {
@@ -452,8 +453,10 @@ module.exports = {
   EditreciverPendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        `update Reciever SET DiliveryProvince=?,DiliveryDistrict=?,StreetNo=?,Street=?,City=? where (recieverId=?)`,
+        `update Reciever SET FirstName=?,LastName=?,DiliveryProvince=?,DiliveryDistrict=?,StreetNo=?,Street=?,City=? where (recieverId=?)`,
         [
+          data.rfname,
+          data.rlname,
           data.rprovince,
           data.rdistric,
           data.rstreetNo,
@@ -549,8 +552,36 @@ module.exports = {
       }
     );
   },
-  getMonthlyOrderCount:(callBack) => {
-    pool.query(`SELECT
+  getOnBranchOrderList: (callBack) => {
+    pool.query(
+      `SELECT Order_id,Pickup_District,Pickup_City,FirstName
+        FROM Orders,Customer
+        WHERE Customer.cus_id=Orders.cus_id AND Orders.Status = "PENDING"`,
+      (error, results) => {
+        if (error) {
+          return callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
+  getOnBranchOrderDetailbyid: (id, callBack) => {
+    pool.query(
+      `SELECT o.Order_id,c.cus_id,r.recieverId,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency
+            FROM Customer c,CustomerMobile cm,Reciever r,RecieverMobile rm,Orders o 
+            WHERE o.Order_id=? AND o.Status=? AND o.cus_id=c.cus_id AND o.recieverId=r.recieverId AND c.cus_id=cm.cus_id  AND r.recieverId=rm.recieverId`,
+      [id, "PENDING"],
+      (error, results, fields) => {
+        if (error) {
+          return callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
+  getMonthlyOrderCount: (callBack) => {
+    pool.query(
+      `SELECT
           m.Month,
           COALESCE(COUNT(o.dilivery_Date), 0) AS OrderCount
       FROM 
@@ -580,8 +611,9 @@ module.exports = {
         if (error) {
           return callBack(error);
         }
-        console.log(results)
+        console.log(results);
         return callBack(null, results);
-      });
-  }
+      }
+    );
+  },
 };
