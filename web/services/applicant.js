@@ -105,12 +105,12 @@ module.exports={
                 }
                 )
         },
-        postAdminFormData: (N_fname, N_lname,N_admin, N_telephone, N_email,password) => {
+        postAdminFormData: (N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city) => {
             //console.log(N_dob);
             console.log("im here...")
             return new Promise((resolve,reject)=>{
-                pool.query(`INSERT INTO Admin(FirstName,LastName,Password,type,Tele,Email) VALUES(?,?,?,?,?,?)`,
-                [N_fname, N_lname,password,N_admin, N_telephone, N_email],
+                pool.query(`INSERT INTO Admin(FirstName,LastName,type,Tele,Email,DOB,Street_No,Street,City,Status) VALUES(?,?,?,?,?,?,?,?,?,?)`,
+                [N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city,'NR'],
                 (error,result,feilds)=>{
                     if(error){
                     reject (error)
@@ -255,18 +255,7 @@ module.exports={
                 })
             })
         },
-        getMailDatailsForAdmin: (admin_Id,callback) => {
-            pool.query(`SELECT admin_Id,FirstName,Email
-                FROM Admin WHERE admin_Id=?`,
-                [admin_Id],(error,result,feilds) => {
-                    if(error){
-                    return callback(error)
-                    }
-                    console.log(result);
-                    return callback(null,result)
-                }
-            )
-        },
+        
         checkAdminEmail: (N_email) => {
             console.log(N_email)
             return new Promise((resolve,reject) => {
@@ -292,8 +281,97 @@ module.exports={
                     }
                 )
             })
+        },
+        getAdminApplicantData:(callback)=>{
+            pool.query(
+                `SELECT admin_Id,FirstName,LastName,type,Tele,Email,DOB,Street_No,Street,City
+                FROM Admin
+                WHERE Status='NR'
+                ORDER BY admin_Id ASC`,
+                [],
+                (error,results,feilds)=>{
+                    if(error){
+                    return callback(error);
+                    }
+                    return callback(null,results)
+                }
+                )
+        },
+
+        getAdminDataById:(admin_Id,callback) => {
+            pool.query(
+                `SELECT admin_Id,FirstName,LastName,type,Tele,Email,DOB,Street_No,Street,City
+                FROM Admin
+                WHERE admin_Id=?`,
+                [admin_Id],
+                (error,results,feilds)=>{
+                    if(error){
+                    return callback(error);
+                    }
+                    return callback(null,results[0])
+                }
+            )
+        },
+
+
+        deleteAdminData: (admin_Id,callback) => {
+            console.log(`admin id is ${admin_Id}`)
+            pool.query(
+                `DELETE FROM Admin WHERE admin_Id=?`,
+                [admin_Id],
+                (error,results,feilds)=>{
+                    if(error){
+                    console.log(error)
+                    return callback(error);
+                    }
+                    console.log(`BACKEND RESULTS ${results}`)
+                    return callback(null,results)
+                }
+                )
+        },
+
+        updateAdminsStatus : (admin_Id,password) => {
+            console.log("i am dil...")
+            console.log(admin_Id)
+            console.log(password)
+            return new Promise((resolve, reject) => {
+                pool.query(`UPDATE Admin set Status='R' , Password= ? WHERE admin_Id = ?`,
+                    [password,admin_Id],
+                    (error, result, fields) => {
+                    if (error) {
+                        reject(error);
+                    }
+                    resolve(result);
+                });
+            });
+        },
+
+        getCurrentAdminStatus : (admin_Id) => {
+            return new Promise((resolve, reject) => {
+                pool.query(`SELECT Status FROM Admin WHERE admin_Id = ?`, [admin_Id], (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else if (result.length > 0) {
+                        resolve(result[0]);
+                    } else {
+                        resolve({ Status: null });
+                    }
+                });
+            });
+        },
+
+        getMailDatailsForAdmin: (admin_Id,callback) => {
+                pool.query(`SELECT admin_Id,FirstName,Email
+                    FROM Admin WHERE admin_Id=?`,
+                    [admin_Id],(error,result,feilds) => {
+                        if(error){
+                            return callback(error)
+                        }
+                        console.log(".........."+result);
+                        return callback(null,result)
+                    }
+                )
         }
 
 
-
-}
+    }

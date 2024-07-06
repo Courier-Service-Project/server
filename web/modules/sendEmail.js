@@ -8,7 +8,7 @@ module.exports = {
       service: "gmail",
       auth: {
         user: "ssshashini21@gmail.com",
-        pass: "nxtbmpobvwhkzwdj",
+        pass: "qkqwxmyfjtygfsko",
       },
     });
 
@@ -34,11 +34,13 @@ module.exports = {
 
 
   sendadminMail:(values,callback) => {
+    console.log("inside mail function")
+    console.log(values);
     let transporter = nodeMailer.createTransport({
       service: "gmail",
       auth: {
         user: "ssshashini21@gmail.com",
-        pass: "nxtbmpobvwhkzwdj",
+        pass: "qkqwxmyfjtygfsko",
       },
     });
 
@@ -54,8 +56,10 @@ module.exports = {
 
     transporter.sendMail(adminMailOptions,(error, info) => {
       if (error) {
+        console.log(error);
         return callback(error);
       } else {
+        console.log(info);
         return callback(null,info);
       }
     });
