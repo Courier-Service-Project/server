@@ -3,7 +3,7 @@ const admin = require("../controllers/admin.js");
 
 module.exports = {
   CheckUsernamePassword: (username, callback) => {
-    // console.log(username)
+    console.log(username);
     pool.query(
       `SELECT password,admin_Id,type,FirstName From Admin WHERE Email=?`,
       [username],
@@ -120,8 +120,8 @@ module.exports = {
   saveForgotOTP: (otp, email) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        `insert into Otp (Email,Otp) values(?,?)`,
-        [email, otp],
+        `update  Otp set Otp=? where (Email = ?)`,
+        [otp, email],
         (error, results, feilds) => {
           if (error) {
             return reject(error);
@@ -149,13 +149,25 @@ module.exports = {
   },
   CheckOTP: (email, callBack) => {
     pool.query(
-      `SELECT Otp from Otp where Email = ?`,
+      `select Otp from Otp where (Email = ?)`,
       [email],
       (error, results) => {
         if (error) {
           return callBack(error);
         }
         return callBack(null, results);
+      }
+    );
+  },
+  ChangeforgotPassword: (data, callback) => {
+    pool.query(
+      `Update Admin set Password=? where (email = ?)`,
+      [data.pass, data.email],
+      (error, result, feilds) => {
+        if (error) {
+          return callback(error);
+        }
+        return callback(null, result);
       }
     );
   },

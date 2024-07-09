@@ -11,6 +11,7 @@ const {
   ChangePassword,
   getAdminprofileDetails,
   getAdminprofileDetailsById,
+  ChangeforgotPassword,
 } = require("../controllers/admin.js");
 
 route.post("/", AdminLogin);
@@ -24,5 +25,6 @@ route.get("/AdminprofileDetails", getAdminprofileDetails);
 route.get("/AdminprofileDetailsById/:id", getAdminprofileDetailsById);
 route.post("/fogotemail", checkForgetEmail);
 route.post("/checkopt", CheckOTP);
+route.post("/forgotChange", ChangeforgotPassword);
 
 module.exports = route;

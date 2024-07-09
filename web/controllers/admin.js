@@ -10,6 +10,7 @@ const {
   CheckPrePassword,
   ChangePassword,
   getAdminprofileDetails,
+  ChangeforgotPassword,
   getAdminprofileDetailsById,
 } = require("../services/admin.js");
 
@@ -254,7 +255,7 @@ module.exports = {
           message: "Invalid forget username",
         });
       }
-      await sendForgotEmail(OTP);
+      // await sendForgotEmail(OTP);
       await saveForgotOTP(OTP, email);
       return res.json({
         success: 1,
@@ -270,16 +271,45 @@ module.exports = {
   CheckOTP: (req, res) => {
     const email = req.body.email;
     const otp = req.body.otp;
-
     CheckOTP(email, (error, results) => {
       if (error) {
-        res.json({
+        return res.json({
           success: 0,
           message: error,
         });
       }
-
-      console.log(results);
+      if (results[0].Otp === otp) {
+        return res.json({
+          success: 1,
+          message: "OTP match",
+        });
+      } else {
+        return res.json({
+          success: 0,
+          message: "OTP not match",
+        });
+      }
+    });
+  },
+  ChangeforgotPassword: (req, res) => {
+    const data = req.body;
+    const salt = genSaltSync(10);
+    data.pass = hashSync(data.pass, salt);
+    console.log(data);
+    ChangeforgotPassword(data, (error, results) => {
+      if (error) {
+        return res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      if (results) {
+        console.log(results);
+        return res.json({
+          success: 1,
+          message: "password change succefully",
+        });
+      }
     });
   },
 };
