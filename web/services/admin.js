@@ -116,4 +116,46 @@ module.exports = {
       }
     );
   },
+  saveForgotOTP: (otp, email) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `insert into Otp (Email,Otp) values(?,?)`,
+        [email, otp],
+        (error, results, feilds) => {
+          if (error) {
+            return reject(error);
+          }
+          return resolve(results);
+        }
+      );
+    });
+  },
+  CheckforgotUsernamePassword: (username) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `SELECT password,admin_Id From Admin WHERE Email=?`,
+        [username],
+        (error, result, feilds) => {
+          if (error) {
+            console.log("ero");
+            return reject(error);
+          }
+
+          return resolve(result);
+        }
+      );
+    });
+  },
+  CheckOTP: (email, callBack) => {
+    pool.query(
+      `SELECT Otp from Otp where Email = ?`,
+      [email],
+      (error, results) => {
+        if (error) {
+          return callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
 };
