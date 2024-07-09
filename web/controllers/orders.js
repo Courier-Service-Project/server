@@ -143,7 +143,7 @@ module.exports = {
           message: error,
         });
       }
-      if (results.length == 0) {
+      if (results.length === 0) {
         res.json({
           success: 101,
           message: "no complete orders yet",
@@ -194,6 +194,12 @@ module.exports = {
           success: 101,
           message: "invalid order id",
         });
+      if (results === undefined){
+        return res.json({
+          success:3,
+          message:results,
+        })
+      }
       } else if (results) {
         res.json({
           success: 200,
@@ -218,7 +224,14 @@ module.exports = {
           success: 101,
           message: "invalid order id",
         });
-      } else if (results) {
+      } 
+      if (results == undefined) {
+        res.json({
+          success: 3,
+          message: results,
+        });
+      }
+      else if (results) {
         res.json({
           success: 200,
           message: results,

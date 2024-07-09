@@ -91,7 +91,8 @@ module.exports = {
     pool.query(
       `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile
                     FROM Admin a
-                    LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id`,
+                    LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id
+                    WHERE a.Status="R"`,
       [],
       (error, results) => {
         if (error) {
@@ -106,7 +107,7 @@ module.exports = {
       `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile
                   FROM Admin a
                   LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id
-                  WHERE a.admin_Id = ?`,
+                  WHERE a.admin_Id = ? `,
       [id],
       (error, results) => {
         if (error) {

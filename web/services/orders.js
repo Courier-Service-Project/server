@@ -235,7 +235,7 @@ module.exports = {
 
   getPendingorderdetailsById: (id, callBack) => {
     pool.query(
-      `SELECT o.Order_id,c.cus_id,r.recieverId,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency,o.branchLocation
+      `SELECT o.Order_id,c.cus_id,r.recieverId,c.FirstName AS CustomerFirstName,c.LastName AS CustomerLastName,c.city AS Customercity,cm.mobile AS Customermobile,c.Email AS CustomerEmail,r.FirstName,r.LastName,r.DiliveryProvince,r.DiliveryDistrict,r.StreetNo,r.Street,r.City,rm.mobile,r.Email,o.Pickup_District,o.Pickup_StreetNo,o.Pickup_Street,o.Pickup_City,o.Emmergency,o.branchLocation
             FROM Customer c,CustomerMobile cm,Reciever r,RecieverMobile rm,Orders o 
             WHERE o.Order_id=? AND o.Status=? AND o.cus_id=c.cus_id AND o.recieverId=r.recieverId AND c.cus_id=cm.cus_id  AND r.recieverId=rm.recieverId`,
       [id, "VERIFYCONFIRM"],
@@ -450,8 +450,8 @@ module.exports = {
   EditcustomerPendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        `update Customer SET FirstName=?,LastName=?,City=? where (cus_id=?)`,
-        [data.sfname, data.slname, data.scity, data.customerid],
+        `update Customer SET FirstName=?,LastName=?,City=?,Email=? where (cus_id=?)`,
+        [data.sfname, data.slname, data.scity,data.semail,data.customerid],
         (error, results, feilds) => {
           if (error) {
             console.log(error);
@@ -466,7 +466,7 @@ module.exports = {
   EditreciverPendingOrderDetailById: (data) => {
     return new Promise((resolve, reject) => {
       pool.query(
-        `update Reciever SET FirstName=?,LastName=?,DiliveryProvince=?,DiliveryDistrict=?,StreetNo=?,Street=?,City=? where (recieverId=?)`,
+        `update Reciever SET FirstName=?,LastName=?,DiliveryProvince=?,DiliveryDistrict=?,StreetNo=?,Street=?,City=?,Email=? where (recieverId=?)`,
         [
           data.rfname,
           data.rlname,
@@ -475,6 +475,7 @@ module.exports = {
           data.rstreetNo,
           data.rstreet,
           data.rhometown,
+          data.remail,
           data.reciverid,
         ],
         (error, results, feilds) => {
