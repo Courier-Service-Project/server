@@ -19,8 +19,12 @@ const { getApplicantDetails,
         getRegCount,
         checkAdminEmail,
         getAdminId,
-        getMailDatailsForAdmin
-} = require("../services/applicant.js");
+        getMailDatailsForAdmin,
+        getAdminApplicantData,
+        getAdminDataById,
+        deleteAdminData,
+        updateAdminsStatus
+        } = require("../services/applicant.js");
 const { genSaltSync, hashSync} = require("bcrypt");
 const createPassword = require("../../utils/passwordGenerate.js");
 const { sendBranchUserMail,sendadminMail } = require("../modules/sendEmail.js");
@@ -65,7 +69,7 @@ module.exports = {
                                 console.log('applicantMobile data successfully inserted...');
                                 const ApplicantVehicle = await postApplicantVehicle(ApplicationId[0].Id, D_vehicle, D_vehicleNo);
                                 if (ApplicantVehicle.affectedRows > 0) {
-                                    console.log('applicantVehicle data successfully inserted...');
+                                    console.log('ApplicantVehicle data successfully inserted...');
                                     return res.json({
                                     success: 200,
                                     message: "successfully Inserted"
@@ -83,10 +87,10 @@ module.exports = {
                                         message: result,
                                     })
                                     })
-                                    console.log('applicantVehicle data not successfully inserted...');
+                                    console.log('ApplicantVehicle data not successfully inserted...');
                                 }
                                 } else {
-                                console.log('applicantMobile data not successfully inserted...');
+                                console.log('ApplicantMobile data not successfully inserted...');
                                 }
                             } else {
                                 return res.json({
@@ -99,14 +103,14 @@ module.exports = {
                             console.log('duplicate vehicle number');
                             return res.json({
                                 success: 101,
-                                message: "duplicate vehicle number"
+                                message: "Duplicate vehicle number"
                             })
                             }
                         } else {
                             console.log('duplicate mobile number');
                             return res.json({
                             success: 101,
-                            message: "duplicate mobile number"
+                            message: "Duplicate mobile number"
                             })
                         }
                         } catch (error) {
@@ -123,79 +127,6 @@ module.exports = {
         // console.log(
         //   applicantId
         // );
-    },
-
-    postAdminData: async (req, res) => {
-        let password=createPassword(12,true,true)
-        let originalPassword = password
-        console.log(password)
-        const salt = genSaltSync(10);
-        password = hashSync(password,salt); 
-        const { N_fname, N_lname,N_admin, N_telephone, N_email, N_dob } = req.body.values;
-        const date = new Date(N_dob).getFullYear().toString() + "-" + new Date(N_dob).getMonth().toString() + "-" + new Date(N_dob).getDate().toString();
-        console.log(date);
-        try {
-            const checkEmail = await checkAdminEmail(N_email)
-            console.log(checkEmail)
-            console.log("email")
-            if(!checkEmail){
-                console.log("check email is not duplicate")
-                const result = await postAdminFormData(N_fname, N_lname,N_admin, N_telephone, N_email,password);
-                console.log(result);
-                console.log("admin data")
-                if(result.affectedRows>0){
-                    const AdminId = await getAdminId(N_email)
-                    console.log("admin id:"+AdminId[0].admin_Id)
-                    getMailDatailsForAdmin(AdminId[0].admin_Id,(error,result) => {
-                        if(error){
-                            return res.json({
-                            success:0,
-                            message:"Get mail delails is not success"
-                            })
-                        }
-                        
-                        else if(result){
-                            console.log(result)
-                            console.log(originalPassword)
-                            const{ admin_Id,FirstName,Email}= result[0]
-                            const adminMail = {admin_Id,FirstName,Email,originalPassword}
-                            sendadminMail(adminMail,(error,result)=>{
-                            if(error){
-                                return res.json({
-                                success:0,
-                                message:"Send mail is not successfull"
-                                })
-                            }
-                            if(result){
-                                console.log(result);
-                            }
-                            })
-                        }
-                        else{
-                            res.json({
-                            success:101,
-                            message:"No admin data found"
-                            })
-                        }
-                    })
-                }else {
-                    return res.json({
-                    success: 101,
-                    message: 'Form not successfully inserted....'
-                    })
-                }
-            }else{
-                return res.json({
-                    success: 101,
-                    message: "Duplicate Email."
-                })
-            }
-            } catch (error) {
-            return res.json({
-                success: 0,
-                message: "Catch error",
-            })
-        }
     },
     
     getApplicantDetailsById: (req, res) => {
@@ -400,4 +331,184 @@ module.exports = {
             })
         }
     },
+
+    getAdminApplicantData: (req,res) => {
+        getAdminApplicantData((error, result) => {
+            if (error) {
+                res.json({
+                success: 0,
+                message: error,
+                })
+            }
+            return res.json({
+                success: 200,
+                message: result,
+            });
+        })
+    },
+
+    getAdminDataById: (req, res) => {
+        const admin_Id = req.params.admin_Id;
+        console.log(admin_Id)
+        getAdminDataById(admin_Id, (error, result) => {
+            if (error) {
+                res.json({
+                success: 0,
+                message: error,
+                })
+            } else {
+                // Parse the formatted DOB string to a Date object if needed
+                if (result && result.DOB) {
+                result.DOB = result.DOB.toISOString().split('T')[0]; // Convert formatted DOB string to Date object
+                }
+            }
+            return res.json({
+                success: 200,
+                message: result,
+            })
+        })
+    },
+
+    deleteAdminData: (req, res) => {
+        const admin_Id = req.params.admin_Id;
+        deleteAdminData(admin_Id, (error, result) => {
+            if (error) {
+                res.json({
+                success: 0,
+                message: error,
+                })
+            }
+            return res.json({
+                success: 200,
+                message: result,
+            })
+        })
+    },
+
+    updateAdminStatus: (req, res) => {
+        const admin_Id = req.params.admin_Id;
+        updateAdminStatus(admin_Id, (error, results) => {
+          if (error) {
+            res.json({
+              success: 0,
+              message: error,
+            });
+          } else if (results.affectedRows > 0) {
+            
+            res.json({
+              success: 200,
+              message: "Admin Registered Successfully",
+            });
+          } else {
+            res.json({
+              success: 101,
+              message: "Try Again",
+            });
+          }
+        });
+      },
+
+    updateAdminStatus : async (req,res) => {
+        let password=createPassword(12,true,true)
+        let originalPassword = password
+        console.log(password)
+        const salt = genSaltSync(10);
+        password = hashSync(password,salt); 
+        const admin_Id = req.params.admin_Id;
+    try {
+        console.log("admin id" +admin_Id)
+        const adminStatus = await updateAdminsStatus(admin_Id,password);
+        console.log(adminStatus.affectedRows)
+        if (adminStatus.affectedRows>0) {
+            console.log("i am in the if")
+            //const Email = req.body.Email;
+            //const AdminId = await getAdminId(Email);
+            console.log("AdminID...")
+            console.log("AdminId:" +admin_Id)
+            getMailDatailsForAdmin(admin_Id,(error,result)=>{
+                if(error){
+                    return res.json({
+                        success:0,
+                        message:"Get mail details is not success"
+                    })
+                }
+                else if(result){
+                    console.log(result)
+                    console.log(originalPassword)
+                    const { admin_Id, FirstName, Email } = result[0];
+                    const adminMail = { admin_Id, FirstName, Email, originalPassword };
+                    // const adminMail = {admin_Id,FirstName,Email}
+                    console.log("admin maill...:" + result[0].FirstName)
+                    sendadminMail(adminMail,(error,result) => {
+                        if(error){
+                            return res.json({
+                                success:0,
+                                message:"Send mail is not successfull"
+                            })
+
+                        }
+                        if(result){
+                            console.log(result[0])
+                            return res.json({
+                                success:200,
+                                message: "Mail successfully send"
+                            })
+
+                        }
+                    })
+                }
+                else{
+                    res.json({
+                    success:101,
+                    message:"No admin data found"
+                    })
+                }
+            })
+        } else {
+            res.json({
+                success: 101,
+                message: "Form not successfully inserted.",
+            });
+        }
+    } catch (error) {
+        res.json({
+            success: 0,
+            message: "Network error. Please try again.",
+        });
+    }
+},
+
+
+postAdminData: async (req, res) => {
+    const { N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city } = req.body.values;
+    const date = new Date(N_dob).getFullYear().toString() + "-" + new Date(N_dob).getMonth().toString() + "-" + new Date(N_dob).getDate().toString();
+    console.log(date);
+    try {
+        const checkEmail = await checkAdminEmail(N_email)
+        console.log(checkEmail)
+        console.log("email")
+        if(!checkEmail){
+            console.log("check email is not duplicate")
+            const result = await postAdminFormData(N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city);
+            console.log(result);
+            console.log("admin data");
+                return res.json({
+                success: 200,
+                message: "Successfully inserted"
+                });
+        }else{
+            return res.json({
+                success: 101,
+                message: "Duplicate Email."
+            })
+        }
+        } catch (error) {
+        return res.json({
+            success: 0,
+            message: "Catch error",
+        })
+    }
+},
+
+
 }

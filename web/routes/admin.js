@@ -6,6 +6,8 @@ const {
   ChangeUserName,
   ChangeContact,
   CheckPrePassword,
+  checkForgetEmail,
+  CheckOTP,
   ChangePassword,
   getAdminprofileDetails,
   getAdminprofileDetailsById,
@@ -20,5 +22,7 @@ route.post("/CheckPrePassword", CheckPrePassword);
 route.post("/ChangePassword", ChangePassword);
 route.get("/AdminprofileDetails", getAdminprofileDetails);
 route.get("/AdminprofileDetailsById/:id", getAdminprofileDetailsById);
+route.post("/fogotemail", checkForgetEmail);
+route.post("/checkopt", CheckOTP);
 
 module.exports = route;

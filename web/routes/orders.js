@@ -20,6 +20,7 @@ const {
   getOrderCounts,
   getOndiliveryOrderList,
   getOnDiliveryOrderDetailById,
+  getMonthlyOrderCount,
   getOnBranchOrderList,
   getOnBranchOrderDetailbyid,
 } = require("../controllers/orders.js");
@@ -73,5 +74,6 @@ webOrderRouter.get(
 );
 webOrderRouter.get("/OnBranchOrderDetails", getOnBranchOrderList);
 webOrderRouter.get("/OnBranchOrderDetailsbyid/:id", getOnBranchOrderDetailbyid);
+webOrderRouter.get("/MonthlyOrderCount", getMonthlyOrderCount);
 
 module.exports = webOrderRouter;

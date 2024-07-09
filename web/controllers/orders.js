@@ -31,6 +31,7 @@ const {
   getOrderCounts,
   getOndiliveryOrderList,
   getOnDiliveryOrderDetailById,
+  getMonthlyOrderCount,
   getOnBranchOrderList,
   getOnBranchOrderDetailbyid,
 } = require("../services/orders");
@@ -563,6 +564,20 @@ module.exports = {
           message: results,
         });
       }
+    });
+  },
+  getMonthlyOrderCount: (req, res) => {
+    getMonthlyOrderCount((error, result) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+      return res.json({
+        success: 200,
+        message: result,
+      });
     });
   },
 };

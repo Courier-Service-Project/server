@@ -1,17 +1,24 @@
 const {
   CheckUsernamePassword,
   AddAdmin,
+  CheckOTP,
   GetAccountInfo,
   ChangeUserName,
   ChangeContact,
+  saveForgotOTP,
+  CheckforgotUsernamePassword,
   CheckPrePassword,
   ChangePassword,
   getAdminprofileDetails,
   getAdminprofileDetailsById,
 } = require("../services/admin.js");
+
+const { sendForgotEmail } = require("../modules/sendmail.js");
+
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const admin = require("../services/admin.js");
+const e = require("cors");
 require("dotenv").config();
 
 module.exports = {
@@ -118,7 +125,7 @@ module.exports = {
   },
   ChangeContact: (req, res) => {
     const data = req.body;
-    ChangeContact(data, (err, result) => {
+    CheckUsernamePassword(data, (err, result) => {
       if (err) {
         return res.json({
           success: 0,
@@ -234,6 +241,45 @@ module.exports = {
           message: results,
         });
       }
+    });
+  },
+  checkForgetEmail: async (req, res) => {
+    const email = req.body.email;
+    const OTP = 15;
+    try {
+      const check = await CheckforgotUsernamePassword(email);
+      if (check.length == 0) {
+        return res.json({
+          success: 0,
+          message: "Invalid forget username",
+        });
+      }
+      await sendForgotEmail(OTP);
+      await saveForgotOTP(OTP, email);
+      return res.json({
+        success: 1,
+        message: "OPT sent",
+      });
+    } catch (error) {
+      return res.json({
+        success: 0,
+        message: error,
+      });
+    }
+  },
+  CheckOTP: (req, res) => {
+    const email = req.body.email;
+    const otp = req.body.otp;
+
+    CheckOTP(email, (error, results) => {
+      if (error) {
+        res.json({
+          success: 0,
+          message: error,
+        });
+      }
+
+      console.log(results);
     });
   },
 };

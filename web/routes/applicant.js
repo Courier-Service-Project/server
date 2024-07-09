@@ -7,6 +7,10 @@ const {
   deleteApplicantPerson,
   postRegisteredData,
   getperonCount,
+  getAdminApplicantData,
+  getAdminDataById,
+  deleteAdminData,
+  updateAdminStatus,
 } = require("../controllers/applicant.js");
 
 webApplicant.get("/applicantDetails", getApplicantDetails);
@@ -17,8 +21,11 @@ webApplicant.delete(
   "/applicantPersonDelete/:applicantid",
   deleteApplicantPerson
 );
-//comfirm
 webApplicant.post("/postregistereddata/:applicationId", postRegisteredData);
 webApplicant.get("/peronCount", getperonCount);
+webApplicant.get("/adminApplicantData", getAdminApplicantData);
+webApplicant.get("/adminDataById/:admin_Id", getAdminDataById);
+webApplicant.delete("/adminDataDelete/:admin_Id", deleteAdminData);
+webApplicant.patch("/updateAdminStatus/:admin_Id", updateAdminStatus);
 
 module.exports = webApplicant;
