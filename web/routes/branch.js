@@ -7,9 +7,18 @@ const {
   getDistance,
 } = require("../controllers/branch.js");
 
+const { protect, allowRoles } = require("../middleware/auth.js");
+
+// protect, allowRoles("superAdmin"),
+
 route.get("/", getBranchLocation);
 route.get("/branchDetails", getBranchDetails);
-route.post("/createNewBranch", createNewBranch);
+route.post(
+  "/createNewBranch",
+  protect,
+  allowRoles("superAdmin"),
+  createNewBranch
+);
 route.post("/getDistance", getDistance);
 
 module.exports = route;

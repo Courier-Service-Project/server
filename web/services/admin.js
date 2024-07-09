@@ -5,7 +5,7 @@ module.exports = {
   CheckUsernamePassword: (username, callback) => {
     // console.log(username)
     pool.query(
-      `SELECT password,admin_Id From Admin WHERE Email=?`,
+      `SELECT password,admin_Id,type,FirstName From Admin WHERE Email=?`,
       [username],
       (error, result, feilds) => {
         if (error) {
@@ -108,6 +108,48 @@ module.exports = {
                   LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id
                   WHERE a.admin_Id = ?`,
       [id],
+      (error, results) => {
+        if (error) {
+          return callBack(error);
+        }
+        return callBack(null, results);
+      }
+    );
+  },
+  saveForgotOTP: (otp, email) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `insert into Otp (Email,Otp) values(?,?)`,
+        [email, otp],
+        (error, results, feilds) => {
+          if (error) {
+            return reject(error);
+          }
+          return resolve(results);
+        }
+      );
+    });
+  },
+  CheckforgotUsernamePassword: (username) => {
+    return new Promise((resolve, reject) => {
+      pool.query(
+        `SELECT password,admin_Id From Admin WHERE Email=?`,
+        [username],
+        (error, result, feilds) => {
+          if (error) {
+            console.log("ero");
+            return reject(error);
+          }
+
+          return resolve(result);
+        }
+      );
+    });
+  },
+  CheckOTP: (email, callBack) => {
+    pool.query(
+      `SELECT Otp from Otp where Email = ?`,
+      [email],
       (error, results) => {
         if (error) {
           return callBack(error);
