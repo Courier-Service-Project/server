@@ -527,7 +527,8 @@ module.exports = {
             COUNT(CASE WHEN Status = 'PENDING' THEN 1 END) AS pendingCount,
             COUNT(CASE WHEN Status = 'ONPICK' THEN 1 END) AS onpickCount,
             COUNT(CASE WHEN Status = 'ONDILIVERY' THEN 1 END) AS ondiliveryCount,
-            COUNT(CASE WHEN Status = 'DILIVERED' THEN 1 END) AS completeCount
+            COUNT(CASE WHEN Status = 'DILIVERED' THEN 1 END) AS completeCount,
+            COUNT(CASE WHEN Status IN ('ONPICK', 'ONDILIVERY', 'PENDING') THEN 1 END) AS inProgressCount
         FROM Orders;
     `;
 
@@ -625,7 +626,7 @@ module.exports = {
         if (error) {
           return callBack(error);
         }
-        console.log(results);
+        //console.log(results);
         return callBack(null, results);
       }
     );

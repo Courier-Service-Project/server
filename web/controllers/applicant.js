@@ -47,29 +47,29 @@ module.exports = {
     },
 
     postApplicantData: async (req, res) => {
-        console.log('postApplicantData');
+        //console.log('postApplicantData');
         const { A_email, A_fname, A_lname, A_dob, A_streetNo, A_city, A_street, E_fname, E_lname, E_relation, E_telephone, D_city, A_telephone, D_vehicle, D_vehicleNo } = req.body.values
         const date = new Date(A_dob).getFullYear().toString() + "-" + new Date(A_dob).getMonth().toString() + "-" + new Date(A_dob).getDate().toString();
         try {
             const checkMobile = await checkApplicantMobile(A_telephone);
-            console.log(checkMobile)
+            //console.log(checkMobile)
             if (!checkMobile) {
-                console.log('mobile is not duplicate');
+                //console.log('mobile is not duplicate');
                 const checkVehicle = await checkApplicantVehicle(D_vehicleNo);
                 if (!checkVehicle) {
-                    console.log('vehicle is not duplicate');
+                    //console.log('vehicle is not duplicate');
                     const postApplicationResult = await postApplicantData(A_email, date, A_fname, A_lname, A_streetNo, A_city, A_street, E_fname, E_lname, E_relation, E_telephone, D_city)
                     if (postApplicationResult.affectedRows > 0) {
-                        console.log('applicant data successfully inserted...');
+                        //console.log('applicant data successfully inserted...');
                         const ApplicationId = await getApplicantId(A_email);
-                        console.log(ApplicationId[0].Id);
+                        //console.log(ApplicationId[0].Id);
                         const ApplicantMobile = await postApplicantMobile(ApplicationId[0].Id, A_telephone);
-                        console.log(ApplicantMobile);
+                        //console.log(ApplicantMobile);
                             if (ApplicantMobile.affectedRows > 0) {
-                                console.log('applicantMobile data successfully inserted...');
+                                //console.log('applicantMobile data successfully inserted...');
                                 const ApplicantVehicle = await postApplicantVehicle(ApplicationId[0].Id, D_vehicle, D_vehicleNo);
                                 if (ApplicantVehicle.affectedRows > 0) {
-                                    console.log('ApplicantVehicle data successfully inserted...');
+                                    //console.log('ApplicantVehicle data successfully inserted...');
                                     return res.json({
                                     success: 200,
                                     message: "successfully Inserted"
@@ -87,10 +87,14 @@ module.exports = {
                                         message: result,
                                     })
                                     })
-                                    console.log('ApplicantVehicle data not successfully inserted...');
+                                    //console.log('ApplicantVehicle data not successfully inserted...');
                                 }
                                 } else {
-                                console.log('ApplicantMobile data not successfully inserted...');
+                                //console.log('ApplicantMobile data not successfully inserted...');
+                                return res.json({
+                                    success:101,
+                                    message:'ApplicantMobile data not successfully inserted...'
+                                })
                                 }
                             } else {
                                 return res.json({
@@ -100,14 +104,14 @@ module.exports = {
                             }
                             }
                             else {
-                            console.log('duplicate vehicle number');
+                            //console.log('duplicate vehicle number');
                             return res.json({
                                 success: 101,
                                 message: "Duplicate vehicle number"
                             })
                             }
                         } else {
-                            console.log('duplicate mobile number');
+                            //console.log('duplicate mobile number');
                             return res.json({
                             success: 101,
                             message: "Duplicate mobile number"
@@ -131,9 +135,11 @@ module.exports = {
     
     getApplicantDetailsById: (req, res) => {
         const id = req.params.applicantid;
-        console.log(id)
+        //console.log("gggggg"+id)
         getApplicantDetailsById(id, (error, result) => {
+           
             if (error) {
+                console.log("error")
                 res.json({
                 success: 0,
                 message: error,
@@ -144,7 +150,13 @@ module.exports = {
                 result.DOB = result.DOB.toISOString().split('T')[0]; // Convert formatted DOB string to Date object
                 }
             }
-            return res.json({
+            if (result === undefined){
+                return res.json({ 
+                    success: 3,
+                    message: result,
+                }) 
+            }
+            return res.json({ 
                 success: 200,
                 message: result,
             })
@@ -153,7 +165,7 @@ module.exports = {
 
     deleteApplicantPerson: (req, res) => {
         const id = req.params.applicantid;
-        console.log(`applicantId is:${id}`)
+        //console.log(`applicantId is:${id}`)
         deleteApplicantPerson(id, (error, result) => {
             if (error) {
                 res.json({
@@ -161,6 +173,7 @@ module.exports = {
                 message: error,
                 })
             }
+            if(result)
             return res.json({
                 success: 200,
                 message: result,
@@ -171,16 +184,16 @@ module.exports = {
     postRegisteredData: async (req, res) => {
         let password=createPassword(12,true,true)
         let originalPassword = password
-        console.log(password)
+        //console.log(password)
         const salt = genSaltSync(10);
         password = hashSync(password,salt);
         const applicantId=req.params.applicationId;
-        console.log( password)
-      //   console.log('yes');
-        //const {values} = req.body;
+        //console.log( password)
+                    //   console.log('yes');
+                    //const {values} = req.body;
         const { BranchLocation, City, DOB, E_ContactNo, E_FirstName, E_LastNane, E_Relationship, Email, FirstName, LastName, MobileNo, StreetNo, Vehice_Type, VehicleNo, Street } = req.body.values
         try {
-            console.log(BranchLocation);
+            //console.log(BranchLocation);
             const checkRegNo = await checkRegVehicleNo(VehicleNo);
             if (!checkRegNo) {
                 const checkRegMobile = await checkRegMobileNo(MobileNo);
@@ -189,19 +202,19 @@ module.exports = {
                 //console.log("postR0egisteredData");
                 console.log(password);
                 if (postRegisteredData.affectedRows > 0) {
-                    console.log(postRegisteredData);
+                    //console.log(postRegisteredData);
                     const RegisteredId = await getRegisteredId(Email);
-                    console.log("registerde id:", RegisteredId[0].BranchUser_id)
-                    console.log('branchuser data successfully inserted....')
+                    // console.log("registerde id:", RegisteredId[0].BranchUser_id)
+                    // console.log('branchuser data successfully inserted....')
                     const RegMobileNo = await postRegMobileNo(RegisteredId[0].BranchUser_id, MobileNo);
                     if (RegMobileNo.affectedRows > 0) {
-                    console.log("Reg mobile:", RegMobileNo)
-                    console.log('mobile no successfully inserted....')
+                    // console.log("Reg mobile:", RegMobileNo)
+                    // console.log('mobile no successfully inserted....')
                     const RegVehicleNo = await postRegVehicleNo(RegisteredId[0].BranchUser_id, Vehice_Type, VehicleNo);
                     if (RegVehicleNo.affectedRows > 0) {
-                        console.log('vehicle details successfully inserted....')
-                        console.log("YES I AM")
-                        console.log(`applicant id:${applicantId}`)
+                        // console.log('vehicle details successfully inserted....')
+                        // console.log("YES I AM")
+                        // console.log(`applicant id:${applicantId}`)
                         deleteApplicantPerson(applicantId, (error, result) => {
                         if (error) {
                             res.json({
@@ -209,7 +222,7 @@ module.exports = {
                             message: error,
                             })
                         }else if(result.affectedRows>0){
-                            console.log(`Registered id is : ${RegisteredId[0].BranchUser_id}`)
+                            //console.log(`Registered id is : ${RegisteredId[0].BranchUser_id}`)
                             getMailDatailsForBranchUser(RegisteredId[0].BranchUser_id,(error,result)=>{
                             if(error){
                                 return res.json({
@@ -219,8 +232,8 @@ module.exports = {
                             }
                             
                             else if(result){
-                                console.log(result)
-                                console.log(originalPassword)
+                                // console.log(result)
+                                // console.log(originalPassword)
                                 const{ BranchUser_id,FirstName,Email,branchLocation}= result[0]
                                 const branchuserMail = {BranchUser_id,FirstName,Email,branchLocation,originalPassword}
                                 sendBranchUserMail(branchuserMail,(error,result)=>{
@@ -231,7 +244,11 @@ module.exports = {
                                     })
                                 }
                                 if(result){
-                                    console.log(result);
+                                    //console.log(result);
+                                    return res.json({
+                                        success:200,
+                                        message:"Mail Successfully sent."
+                                    })
                                 }
                                 })
                             }
@@ -254,13 +271,17 @@ module.exports = {
                             })
                             return res.json({
                             success: 200,
-                            message: " Branch user Registration failed ",
+                            message: "Branch user Registration successfully.",
                             })
                         } 
                         })
                     }
                     } else {
-                    console.log('mobile details insertion unsuccessfull')
+                    //console.log('mobile details insertion unsuccessfull')
+                    return res.json({
+                        success:101,
+                        message:'mobile details insertion unsuccessfull'
+                    })
                     }
                 }
                 else {
@@ -270,14 +291,14 @@ module.exports = {
                     })
                 }
                 } else {
-                console.log('duplicate vehicle number');
+                //console.log('duplicate vehicle number');
                 return res.json({
                     success: 101,
                     message: "duplicate vehicle number"
                 })
                 }
             } else {
-                console.log('duplicate mobile number');
+                //console.log('duplicate mobile number');
                 return res.json({
                 success: 101,
                 message: "duplicate mobile number"
@@ -349,7 +370,7 @@ module.exports = {
 
     getAdminDataById: (req, res) => {
         const admin_Id = req.params.admin_Id;
-        console.log(admin_Id)
+        //console.log(admin_Id)
         getAdminDataById(admin_Id, (error, result) => {
             if (error) {
                 res.json({
@@ -361,6 +382,12 @@ module.exports = {
                 if (result && result.DOB) {
                 result.DOB = result.DOB.toISOString().split('T')[0]; // Convert formatted DOB string to Date object
                 }
+            }
+            if (result === undefined){
+                return res.json({ 
+                    success: 3,
+                    message: result,
+                }) 
             }
             return res.json({
                 success: 200,
@@ -394,7 +421,6 @@ module.exports = {
               message: error,
             });
           } else if (results.affectedRows > 0) {
-            
             res.json({
               success: 200,
               message: "Admin Registered Successfully",
@@ -411,20 +437,20 @@ module.exports = {
     updateAdminStatus : async (req,res) => {
         let password=createPassword(12,true,true)
         let originalPassword = password
-        console.log(password)
+        //console.log(password)
         const salt = genSaltSync(10);
         password = hashSync(password,salt); 
         const admin_Id = req.params.admin_Id;
     try {
-        console.log("admin id" +admin_Id)
+        //console.log("admin id" +admin_Id)
         const adminStatus = await updateAdminsStatus(admin_Id,password);
-        console.log(adminStatus.affectedRows)
+        //console.log(adminStatus.affectedRows)
         if (adminStatus.affectedRows>0) {
-            console.log("i am in the if")
-            //const Email = req.body.Email;
-            //const AdminId = await getAdminId(Email);
-            console.log("AdminID...")
-            console.log("AdminId:" +admin_Id)
+            //console.log("i am in the if")
+                //const Email = req.body.Email;
+                //const AdminId = await getAdminId(Email);
+            //console.log("AdminID...")
+            //console.log("AdminId:" +admin_Id)
             getMailDatailsForAdmin(admin_Id,(error,result)=>{
                 if(error){
                     return res.json({
@@ -433,12 +459,12 @@ module.exports = {
                     })
                 }
                 else if(result){
-                    console.log(result)
-                    console.log(originalPassword)
+                    //console.log(result)
+                    //console.log(originalPassword)
                     const { admin_Id, FirstName, Email } = result[0];
                     const adminMail = { admin_Id, FirstName, Email, originalPassword };
-                    // const adminMail = {admin_Id,FirstName,Email}
-                    console.log("admin maill...:" + result[0].FirstName)
+                      // const adminMail = {admin_Id,FirstName,Email}
+                    //console.log("admin maill...:" + result[0].FirstName)
                     sendadminMail(adminMail,(error,result) => {
                         if(error){
                             return res.json({
@@ -448,7 +474,7 @@ module.exports = {
 
                         }
                         if(result){
-                            console.log(result[0])
+                            //console.log(result[0])
                             return res.json({
                                 success:200,
                                 message: "Mail successfully send"
@@ -482,16 +508,16 @@ module.exports = {
 postAdminData: async (req, res) => {
     const { N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city } = req.body.values;
     const date = new Date(N_dob).getFullYear().toString() + "-" + new Date(N_dob).getMonth().toString() + "-" + new Date(N_dob).getDate().toString();
-    console.log(date);
+    //console.log(date);
     try {
         const checkEmail = await checkAdminEmail(N_email)
-        console.log(checkEmail)
-        console.log("email")
+        // console.log(checkEmail)
+        // console.log("email")
         if(!checkEmail){
-            console.log("check email is not duplicate")
+            //console.log("check email is not duplicate")
             const result = await postAdminFormData(N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city);
-            console.log(result);
-            console.log("admin data");
+            // console.log(result);
+            // console.log("admin data");
                 return res.json({
                 success: 200,
                 message: "Successfully inserted"

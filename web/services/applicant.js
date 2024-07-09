@@ -16,7 +16,7 @@ module.exports={
             )
         },
         postApplicantData:(A_email,A_dob,A_fname,A_lname,A_streetNo,A_city,A_street,E_fname,E_lname,E_relation,E_telephone,D_city)=>{
-            console.log(A_dob);
+            //console.log(A_dob);
             return new Promise((resolve,reject)=>{
                 pool.query(`INSERT INTO Applicant(FirstName,LastName,DOB,Email,StreetNo,Street,City,BranchLocation,E_FirstName,E_LastNane,E_ContactNo,E_Relationship)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
                     [A_fname,A_lname,A_dob,A_email,A_streetNo,A_street,A_city,D_city,E_fname,E_lname,E_telephone,E_relation],
@@ -63,35 +63,34 @@ module.exports={
             })
         },
         checkApplicantMobile: (A_telephone) => {
-            console.log(A_telephone)
+            // console.log(A_telephone)
             return new Promise((resolve,reject)=>{
                 pool.query(`SELECT 1 FROM ApplicantMobile WHERE MobileNo = ? LIMIT 1`,
                 [A_telephone],(error,result,feilds) =>{
                     if(error){
                     reject(error)
                     }
-                    console.log(result)
+                    // console.log(result)
                     resolve(result.length > 0)
                 })
             })    
         },
         checkApplicantVehicle: (D_vehicleNo) => {
-            console.log(D_vehicleNo);
+            //console.log(D_vehicleNo);
             return new Promise((resolve,reject)=>{
                 pool.query(`SELECT 1 FROM ApplicantVehicle WHERE VehicleNo = ? LIMIT 1`,
                     [D_vehicleNo],(error,result,feilds)=>{
                     if(error){
                         reject(error)
                     }
-                    console.log(result)
+                    //console.log(result)
                     resolve(result.length > 0)
                     }
                 )
             })
         },
         deleteApplicantPerson: (id,callback) => {
-            console.log('IN THE FUNCTION');
-            console.log(`applicsnt id is ${id}`)
+            //console.log(`applicsnt id is ${id}`)
             pool.query(
                 `DELETE FROM Applicant WHERE Id=?`,
                 [id],
@@ -100,14 +99,13 @@ module.exports={
                     console.log(error)
                     return callback(error);
                     }
-                    console.log(`BACKEND RESULTS ${results}`)
                     return callback(null,results)
                 }
                 )
         },
         postAdminFormData: (N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city) => {
             //console.log(N_dob);
-            console.log("im here...")
+            //console.log("im here...")
             return new Promise((resolve,reject)=>{
                 pool.query(`INSERT INTO Admin(FirstName,LastName,type,Tele,Email,DOB,Street_No,Street,City,Status) VALUES(?,?,?,?,?,?,?,?,?,?)`,
                 [N_fname, N_lname,N_admin, N_telephone, N_email,N_dob,N_streetNo,N_street,N_city,'NR'],
@@ -121,7 +119,7 @@ module.exports={
             })
         },
         getApplicantDetailsById: (id,callback) => {
-            console.log(id)
+            //console.log(id)
             pool.query(
                 `SELECT A.Id AS id,A.FirstName AS FirstName,A.City AS City,A.BranchLocation AS BranchLocation,V.Vehice_Type AS Vehice_Type,A.LastName AS LastName,DATE(A.DOB) AS DOB,A.Email AS Email,A.StreetNo AS StreetNo,A.Street AS Street,A.E_FirstName AS E_FirstName,A.E_LastNane AS E_LastNane,A.E_ContactNo AS E_ContactNo,A.E_Relationship AS E_Relationship,M.MobileNo AS MobileNo,V.VehicleNo AS VehicleNo
                 FROM Applicant A,ApplicantVehicle V,ApplicantMobile M
@@ -136,7 +134,7 @@ module.exports={
             )
         },
         postRegisteredPerData:(BranchLocation,City,DOB,E_ContactNo,E_FirstName,E_LastNane,E_Relationship,Email,FirstName,LastName,StreetNo,Street,password)=>{
-            console.log(DOB);
+            //console.log(DOB);
             return new Promise((resolve,reject)=>{
                 pool.query(`INSERT INTO BranchUser(FirstName,LastName,StreetNo,Street,City,Password,Email,NewUser,branchLocation,DOB,E_FirstName,E_LastNane,E_ContactNo,E_Relationship)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
                     [FirstName,LastName,StreetNo,Street,City,password,Email,'T',BranchLocation,DOB,E_FirstName,E_LastNane,E_ContactNo,E_Relationship],
@@ -188,7 +186,6 @@ module.exports={
             )
         },
         checkRegMobileNo:(MobileNo) => {
-            console.log('inside mobile no');
             return new Promise((resolve,reject) => {
                 pool.query(`SELECT 1 FROM BranchUserMobile WHERE Mobile=? LIMIT 1`,
                     [MobileNo],
@@ -196,14 +193,13 @@ module.exports={
                     if(error){
                         reject(error)
                     }
-                    console.log(result.length);
+                    //console.log(result.length);
                     resolve(result.length>0)
                     }
                 )
              })
         },
         checkRegVehicleNo: (VehicleNo) =>{
-            console.log('inside vehicle no');
             return new Promise((resolve,reject) => {
                 pool.query(`SELECT 1 FROM Vehicle WHERE Vehicle_NO=? LIMIT 1`,
                     [VehicleNo],
@@ -211,7 +207,7 @@ module.exports={
                     if(error){
                         reject(error)
                     }
-                    console.log(result.length);
+                    //console.log(result.length);
                     resolve(result.length>0)
                     }
                 )
@@ -224,7 +220,7 @@ module.exports={
                     if(error){
                     return callback(error)
                     }
-                    console.log(result);
+                    //console.log(result);
                     return callback(null,result)
                 }
             )
@@ -257,14 +253,14 @@ module.exports={
         },
         
         checkAdminEmail: (N_email) => {
-            console.log(N_email)
+            //console.log(N_email)
             return new Promise((resolve,reject) => {
                 pool.query(`SELECT 1 FROM Admin WHERE Email=? LIMIT 1`,
                 [N_email],(error,result,feilds) =>{
                     if(error){
                         reject(error)
                     }
-                    console.log(result.length)
+                    //console.log(result.length)
                     resolve(result.length>0)
                 }
                 )
@@ -315,25 +311,24 @@ module.exports={
 
 
         deleteAdminData: (admin_Id,callback) => {
-            console.log(`admin id is ${admin_Id}`)
+            //console.log(`admin id is ${admin_Id}`)
             pool.query(
                 `DELETE FROM Admin WHERE admin_Id=?`,
                 [admin_Id],
                 (error,results,feilds)=>{
                     if(error){
-                    console.log(error)
+                    //console.log(error)
                     return callback(error);
                     }
-                    console.log(`BACKEND RESULTS ${results}`)
+                    //console.log(`BACKEND RESULTS ${results}`)
                     return callback(null,results)
                 }
                 )
         },
 
         updateAdminsStatus : (admin_Id,password) => {
-            console.log("i am dil...")
-            console.log(admin_Id)
-            console.log(password)
+            // console.log(admin_Id)
+            // console.log(password)
             return new Promise((resolve, reject) => {
                 pool.query(`UPDATE Admin set Status='R' , Password= ? WHERE admin_Id = ?`,
                     [password,admin_Id],
@@ -367,7 +362,7 @@ module.exports={
                         if(error){
                             return callback(error)
                         }
-                        console.log(".........."+result);
+                        //console.log(".........."+result);
                         return callback(null,result)
                     }
                 )
