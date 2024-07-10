@@ -1,5 +1,6 @@
 const pool = require("../../config/dbConfig.js");
 const admin = require("../controllers/admin.js");
+const otpGenerator = require("otp-generator");
 
 module.exports = {
   CheckUsernamePassword: (username, callback) => {
@@ -141,7 +142,7 @@ module.exports = {
             console.log("ero");
             return reject(error);
           }
-
+          console.log("Invalid Email");
           return resolve(result);
         }
       );
@@ -170,5 +171,19 @@ module.exports = {
         return callback(null, result);
       }
     );
+  },
+  OTPGenerate: () => {
+    return new Promise((resolve, reject) => {
+      const otp = otpGenerator.generate(4, {
+        upperCaseAlphabets: false,
+        specialChars: false,
+      });
+
+      if (otp) {
+        return resolve(otp);
+      } else {
+        reject("Failed to generate OTP");
+      }
+    });
   },
 };

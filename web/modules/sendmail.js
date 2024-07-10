@@ -27,10 +27,10 @@ module.exports = {
     return new Promise((resolve, reject) => {
       transporter.sendMail(mailOption, (error, info) => {
         if (error) {
-          console.log("Error:", error);
+          //console.log("Error:", error);
           return reject(error);
         }
-        console.log("Email sent successfully:");
+        //console.log("Email sent successfully:");
         return resolve(info);
       });
     });
