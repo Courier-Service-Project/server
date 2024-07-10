@@ -35,7 +35,10 @@ const {
   getMonthlyOrderCount,
   getOnBranchOrderList,
   getOnBranchOrderDetailbyid,
+  getMailDatailsForConfirmOrder,
 } = require("../services/orders");
+
+const { sendOrderConfirmMail } = require("../modules/sendEmail");
 
 module.exports = {
   getOrderDetailsById: (req, res) => {
@@ -194,12 +197,12 @@ module.exports = {
           success: 101,
           message: "invalid order id",
         });
-      if (results === undefined){
-        return res.json({
-          success:3,
-          message:results,
-        })
-      }
+        if (results === undefined) {
+          return res.json({
+            success: 3,
+            message: results,
+          });
+        }
       } else if (results) {
         res.json({
           success: 200,
@@ -224,14 +227,13 @@ module.exports = {
           success: 101,
           message: "invalid order id",
         });
-      } 
+      }
       if (results == undefined) {
         res.json({
           success: 3,
           message: results,
         });
-      }
-      else if (results) {
+      } else if (results) {
         res.json({
           success: 200,
           message: results,
@@ -288,24 +290,80 @@ module.exports = {
 
   UpdatePendingOrderDetailsById: (req, res) => {
     const id = req.params.id;
-    UpdatePendingOrderDetailsById(id, (error, results) => {
-      if (error) {
-        res.json({
-          success: 0,
-          message: error,
-        });
-      } else if (results.affectedRows > 0) {
-        res.json({
-          success: 200,
-          message: "Order Confirm successfully",
-        });
-      } else {
-        res.json({
-          success: 101,
-          message: "Try Again",
-        });
-      }
-    });
+    try {
+      UpdatePendingOrderDetailsById(id, (error, results) => {
+        if (error) {
+          console.log(`error is at UpdatePendingOrderDetailsById ${error}`);
+          return res.json({
+            success: 0,
+            message: error,
+          });
+        }
+        if (results.affectedRows > 0) {
+          getMailDatailsForConfirmOrder(id, (error, results) => {
+            if (error) {
+              return res.json({
+                success: 0,
+                message: "Get mail details is not successful",
+              });
+            }
+            if (results) {
+              // console.log(results);
+              const { Order_id, branchLocation, Email } = results[0];
+              const ConfirmOrderMail = { Order_id, branchLocation, Email };
+              sendOrderConfirmMail(ConfirmOrderMail, (error, results) => {
+                if (error) {
+                  console.log("status 0");
+                  return res.json({
+                    success: 0,
+                    message: "Send mail is not successful",
+                  });
+                } else if (results) {
+                  // console.log(results);
+                  if (
+                    results.accepted.includes(Email) &&
+                    results.response.includes("250 2.0.0 OK")
+                  ) {
+                    // console.log("status 200");
+                    return res.json({
+                      success: 200,
+                      message: "Mail successfully sent",
+                    });
+                  } else {
+                    // console.log("status 101");
+                    return res.json({
+                      success: 101,
+                      message: "Reciever Email is not correct",
+                    });
+                  }
+                } else {
+                  // console.log("status 101");
+                  return res.json({
+                    success: 101,
+                    message: "Error when sending Email",
+                  });
+                }
+              });
+            } else {
+              return res.json({
+                success: 101,
+                message: "No Confirm Order data found",
+              });
+            }
+          });
+        } else {
+          return res.json({
+            success: 101,
+            message: "Form not successfully inserted.",
+          });
+        }
+      });
+    } catch (error) {
+      return res.json({
+        success: 0,
+        message: "Network error. Please try again.",
+      });
+    }
   },
 
   EditPendindOrder: async (req, res) => {

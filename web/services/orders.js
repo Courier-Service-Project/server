@@ -316,6 +316,24 @@ module.exports = {
       }
     );
   },
+
+  
+  getMailDatailsForConfirmOrder: (id,callback) => {
+    // console.log(`your id is ${id}`)
+    pool.query(`SELECT o.Order_id,o.branchLocation,c.Email
+        FROM Orders o, Customer c 
+        WHERE o.Order_id=? AND o.cus_id=c.cus_id`,
+        [id],(error,result,feilds) => {
+            if(error){
+              console.log(error)
+                return callback(error)
+            }
+            // console.log(".........."+result);
+            return callback(null,result)
+        }
+    )
+},
+
   getVerifyPickedOrderList: (callBack) => {
     pool.query(
       `SELECT Order_id,Pickup_District,Pickup_City,FirstName
