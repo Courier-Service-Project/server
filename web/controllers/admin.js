@@ -127,7 +127,7 @@ module.exports = {
   },
   ChangeContact: (req, res) => {
     const data = req.body;
-    CheckUsernamePassword(data, (err, result) => {
+    ChangeContact(data, (err, result) => {
       if (err) {
         return res.json({
           success: 0,
