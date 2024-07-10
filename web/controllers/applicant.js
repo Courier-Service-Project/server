@@ -120,7 +120,7 @@ module.exports = {
                         } catch (error) {
                         return res.json({
                             success: 0,
-                            message: error
+                            message: error.message
                         })
                         }
     
@@ -182,7 +182,7 @@ module.exports = {
     },
 
     postRegisteredData: async (req, res) => {
-        let password=createPassword(12,true,true)
+        let password=createPassword(4,true,true)
         let originalPassword = password
         //console.log(password)
         const salt = genSaltSync(10);
@@ -435,7 +435,7 @@ module.exports = {
       },
 
     updateAdminStatus : async (req,res) => {
-        let password=createPassword(12,true,true)
+        let password=createPassword(4,true,true)
         let originalPassword = password
         //console.log(password)
         const salt = genSaltSync(10);
