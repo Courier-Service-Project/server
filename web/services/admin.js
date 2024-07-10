@@ -30,7 +30,7 @@ module.exports = {
   },
   GetAccountInfo: (id, callback) => {
     pool.query(
-      `select FirstName,LastName,Tele,Email from Admin  where (admin_Id = ?)`,
+      `select FirstName,LastName,Tele,Email,AdminProfileUrl from Admin  where (admin_Id = ?)`,
       [id],
       (error, result, feilds) => {
         if (error) {
@@ -90,7 +90,7 @@ module.exports = {
   },
   getAdminprofileDetails: (callBack) => {
     pool.query(
-      `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile,a.Status
+      `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile,a.Status,a.AdminProfileUrl
                     FROM Admin a
                     LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id
                     WHERE a.Status="R"`,
@@ -185,5 +185,31 @@ module.exports = {
         reject("Failed to generate OTP");
       }
     });
+  },
+  updateImageUrl: (url, userId, callback) => {
+    pool.query(
+      `UPDATE Admin SET AdminProfileUrl=? WHERE admin_Id=?`,
+      [url, userId],
+      (error, result, feilds) => {
+        if (error) {
+          return callback(error);
+        } else {
+          return callback(null, result);
+        }
+      }
+    );
+  },
+  deleteProfileImage: (userId, callback) => {
+    pool.query(
+      `UPDATE Admin SET AdminProfileUrl=NULL WHERE admin_Id=?`,
+      [userId],
+      (error, result, feilds) => {
+        if (error) {
+          return callback(error);
+        } else {
+          return callback(null, result);
+        }
+      }
+    );
   },
 };
