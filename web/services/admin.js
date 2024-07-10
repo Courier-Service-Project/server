@@ -90,7 +90,7 @@ module.exports = {
   },
   getAdminprofileDetails: (callBack) => {
     pool.query(
-      `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile
+      `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile,a.Status
                     FROM Admin a
                     LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id
                     WHERE a.Status="R"`,
@@ -105,7 +105,7 @@ module.exports = {
   },
   getAdminprofileDetailsById: (id, callBack) => {
     pool.query(
-      `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile
+      `SELECT a.admin_Id, a.FirstName, a.LastName, a.type, a.Tele, a.Email, am.mobile,a.DOB,a.Street_No,a.Street,a.City
                   FROM Admin a
                   LEFT JOIN AdminMobile am ON a.admin_Id = am.admin_Id
                   WHERE a.admin_Id = ? `,

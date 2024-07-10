@@ -15,8 +15,8 @@ route.get("/", getBranchLocation);
 route.get("/branchDetails", getBranchDetails);
 route.post(
   "/createNewBranch",
-  protect,
-  allowRoles("superAdmin"),
+  // protect,
+  // allowRoles("superAdmin"),
   createNewBranch
 );
 route.post("/getDistance", getDistance);
