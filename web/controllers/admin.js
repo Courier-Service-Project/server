@@ -4,6 +4,7 @@ const {
   CheckOTP,
   GetAccountInfo,
   ChangeUserName,
+  OTPGenerate,
   ChangeContact,
   saveForgotOTP,
   CheckforgotUsernamePassword,
@@ -244,19 +245,21 @@ module.exports = {
       }
     });
   },
+
   checkForgetEmail: async (req, res) => {
     const email = req.body.email;
-    const OTP = 15;
     try {
       const check = await CheckforgotUsernamePassword(email);
       if (check.length == 0) {
         return res.json({
           success: 0,
-          message: "Invalid forget username",
+          message: "Email is not match ",
         });
+      } else {
+        const otp = await OTPGenerate();
+        await sendForgotEmail(otp);
+        await saveForgotOTP(otp, email);
       }
-      // await sendForgotEmail(OTP);
-      await saveForgotOTP(OTP, email);
       return res.json({
         success: 1,
         message: "OPT sent",
@@ -286,7 +289,7 @@ module.exports = {
       } else {
         return res.json({
           success: 0,
-          message: "OTP not match",
+          message: "OTP is not match",
         });
       }
     });
@@ -295,7 +298,7 @@ module.exports = {
     const data = req.body;
     const salt = genSaltSync(10);
     data.pass = hashSync(data.pass, salt);
-    console.log(data);
+    // console.log(data);
     ChangeforgotPassword(data, (error, results) => {
       if (error) {
         return res.json({
