@@ -42,7 +42,7 @@ module.exports = {
       </head>
       <body>
           <div class="header">
-            <h2>Your Order Confirmation</h2>
+            <h2>Your have been selected!</h2>
           </div>
           <div class="content">
             <h2>Welcome to Xpress !</h2>
@@ -51,7 +51,7 @@ module.exports = {
             <p>Your ID: ${values.BranchUser_id}</p>
             <p>User Name : ${values.Email}</p>
             <p>Password : ${values.originalPassword} </p>
-            <p>Branch Location : ${values.originalPassword} </p>
+            <p>Branch Location : ${values.branchLocation} </p>
             <p>You have to reset your password at your first Login!</p>
           </div>
       </body>
@@ -110,7 +110,7 @@ module.exports = {
       </head>
       <body>
           <div class="header">
-            <h2>Your Order Confirmation</h2>
+            <h2>Your have been selected!</h2>
           </div>
           <div class="content">
             <h2>Welcome to Xpress !</h2>
