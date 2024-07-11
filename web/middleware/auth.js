@@ -23,7 +23,7 @@ const protect = async (req, res, next) => {
       }
 
       req.user = decoded;
-      //   console.log("Decode " + decoded);
+      console.log(req.user);
       console.log("next");
 
       next();
@@ -43,12 +43,12 @@ const protect = async (req, res, next) => {
 
 const allowRoles = (...roles) => {
   return (req, res, next) => {
-    //console.log(req.user.user.role);
+    console.log("type" + req.user.user.role);
     if (!roles.includes(req.user.user.role)) {
       //console.log("Not authorized to access this route");
       return res.json({
         success: 0,
-        message: "Not authorized to access this route",
+        message: "You're not authorized",
       });
     }
     next();
