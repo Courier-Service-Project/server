@@ -13,6 +13,8 @@ const {
   getAdminprofileDetails,
   ChangeforgotPassword,
   getAdminprofileDetailsById,
+  updateImageUrl,
+  deleteProfileImage
 } = require("../services/admin.js");
 
 const { sendForgotEmail } = require("../modules/sendmail.js");
@@ -21,6 +23,7 @@ const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 var jwt = require("jsonwebtoken");
 const admin = require("../services/admin.js");
 const e = require("cors");
+const uploadFile = require("../modules/awsS3Config.js");
 require("dotenv").config();
 
 module.exports = {
@@ -316,4 +319,54 @@ module.exports = {
       }
     });
   },
+  updateProfile:async (req,res)=>{
+    const body=req.body;
+    const id=req.params.id;
+    console.log(body.preview);
+    const result=await uploadFile(body.preview,id)
+    console.log(result);
+    updateImageUrl(result.Location,id,(error,result)=>{
+      if(error){
+        console.log(`error is at uplaodImageUrl: ${error}`)
+        return res.json({
+          success:0,
+          message:'Internal Server Error'
+        })
+      }else if(result.affectedRows>0){
+        console.log(result);
+        return res.json({
+          success:200,
+          message:"Image Successfully Update"
+        })
+      }
+      else{
+        return res.json({
+          success:101,
+          message:"Image Doesn't updated"
+        })
+      }
+    })
+  },
+  deleteProfileImage:(req,res)=>{
+    const userId=req.params.id;
+    deleteProfileImage(userId,(error,result)=>{
+      if(error){
+        console.log(`error is at deleteProfileImage:  ${error}`)
+        return res.json({
+          success:0,
+          message:'Internal server Error'
+        })
+      }else if(result.affectedRows>0){
+        return res.json({
+          success:200,
+          message:'Deletion Successfull'
+        })
+      }else{
+        return res.json({
+          success:101,
+          message:'deletion unsuccessfull'
+        })
+      }
+    })
+  }
 };

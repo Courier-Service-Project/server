@@ -12,6 +12,8 @@ const {
   getAdminprofileDetails,
   getAdminprofileDetailsById,
   ChangeforgotPassword,
+  updateProfile,
+  deleteProfileImage
 } = require("../controllers/admin.js");
 
 route.post("/", AdminLogin);
@@ -26,5 +28,7 @@ route.get("/AdminprofileDetailsById/:id", getAdminprofileDetailsById);
 route.post("/fogotemail", checkForgetEmail);
 route.post("/checkopt", CheckOTP);
 route.post("/forgotChange", ChangeforgotPassword);
+route.patch("/updateProfile/:id",updateProfile);
+route.delete("/deleteProfileImage/:id",deleteProfileImage)
 
 module.exports = route;
