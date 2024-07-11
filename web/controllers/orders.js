@@ -66,6 +66,10 @@ module.exports = {
 
   CreateOrder: async (req, res) => {
     const data = req.body;
+    if (req.body.admin_Id === undefined) {
+      req.body.admin_Id = 29;
+    }
+
     try {
       await SenderTable(data);
       await RecieverTable(data);

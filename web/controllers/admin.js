@@ -27,9 +27,10 @@ module.exports = {
   AdminLogin: (req, res) => {
     CheckUsernamePassword(req.body.userName, (err, result) => {
       if (err) {
+        console.log(err);
         return res.json({
           success: 0,
-          message: "error",
+          message: err,
         });
       }
       if (result.length == 0) {
@@ -40,12 +41,12 @@ module.exports = {
       }
 
       if (result) {
-        console.log(result[0].type);
+        //console.log(result[0].type);
 
         const payload = {
           user: {
             admnID: req.body.userName,
-            role: "Admin",
+            role: result[0].type,
           },
         };
         if (compareSync(req.body.password, result[0].password)) {

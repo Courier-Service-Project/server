@@ -25,7 +25,6 @@ const {
   getOnBranchOrderList,
   getOnBranchOrderDetailbyid,
 } = require("../controllers/orders.js");
-// protect, allowRoles("superAdmin"),
 
 const { protect, allowRoles } = require("../middleware/auth.js");
 
